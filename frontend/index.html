@@ -1,0 +1,2668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ZipMetro Delivery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Bungee&family=Righteous&family=Black+Ops+One&display=swap" rel="stylesheet">
+  <!-- ZipMetro logo - vibrant graffiti-style design -->
+  <link rel="icon" href="assets/ZipMetroLogoRemoveBG (1).png" />
+  <style>
+    * { box-sizing: border-box; }
+    :root{
+      --font-family: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
+      --font-graffiti: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
+      --font-body: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
+      --max-width:1200px;
+      
+      /* ZipMetro Brand Colors */
+      --primary: #B83EBF; /* Primary Purple */
+      --primary-dark: #A12EB8; /* Secondary Purple */
+      --primary-light: #C85ECF;
+      --accent: #D8FF3F; /* Neon Yellow/Green Accent */
+      --accent-dark: #C4E638;
+      --accent-light: #E5FF66;
+      
+      /* Background colors */
+      --bg-primary: #0F0F0F; /* Dark Background */
+      --bg-secondary: #1A1A1A;
+      --bg-tertiary: #252525;
+      --surface: #1A1A1A;
+      --surface-elevated: #252525;
+      
+      /* Text colors for dark background */
+      --text-primary: #F1F1F1; /* Neutral Gray for text */
+      --text-secondary: #D0D0D0;
+      --text-muted: #A0A0A0;
+      --text-inverse: #0F0F0F; /* Dark text for light backgrounds (CTAs) */
+      
+      --border-light: #333333;
+      --border-medium: #404040;
+      --border-strong: #555555;
+      
+      /* Shadows for depth - standardized for cards */
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+      
+      --focus-ring: 0 0 0 3px rgba(184, 62, 191, 0.4);
+      --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Spacing scale */
+      --space-xs: 0.5rem;
+      --space-sm: 0.75rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --space-3xl: 4rem;
+      
+      /* Touch target sizes (minimum 44x44px for accessibility) */
+      --touch-target: 44px;
+      --touch-target-lg: 52px;
+    }
+    html{ 
+      -webkit-text-size-adjust:100%; 
+      font-size:16px;
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: var(--font-graffiti);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height: 1.6;
+    }
+    .skip-link{
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus{
+      left: var(--space-md);
+      top: var(--space-md);
+      width: auto;
+      height: auto;
+      background: var(--primary);
+      color: var(--text-inverse);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      z-index: 9999;
+      font-weight: 600;
+    }
+    header {
+      background: #0F0F0F;
+      padding: 0;
+      padding-left: 16px;
+      padding-right: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      height: 72px;
+      min-height: 72px;
+    }
+    .brand {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+      margin: 0;
+      padding: 0;
+    }
+    /* Brand Logo - Vibrant Graffiti Style */
+    .brand-logo {
+      max-width: 140px;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      border-radius: 0;
+      display: block;
+      margin: 0;
+      padding: 0;
+      transition: transform var(--transition-base);
+    }
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      margin: 0;
+      padding: 0;
+    }
+    /* Hide logo container if image fails to load */
+    .brand-logo:not([src]),
+    .brand-logo[src=""],
+    img.brand-logo[src*="undefined"],
+    img.brand-logo[src*="null"] {
+      display: none;
+    }
+    /* Hide brand link if logo is missing */
+    .brand-link:has(img.brand-logo:not([src])),
+    .brand-link:has(img.brand-logo[src=""]) {
+      display: none;
+    }
+    .brand-title {
+      font-family: var(--font-graffiti);
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      display: block;
+      line-height: 1.2;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    nav {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+      padding: 0 var(--space-lg);
+    }
+    /* Standardized Nav Toggle */
+    .nav-toggle{
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      padding: var(--space-sm);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      min-height: 44px;
+      min-width: 44px;
+      transition: all var(--transition-base);
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .nav-toggle:hover {
+      background: rgba(161, 46, 184, 0.1);
+      border-color: #A12EB8;
+      color: #A12EB8;
+    }
+    .nav-toggle:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .nav-toggle svg{ display: block; }
+    /* Standardized Nav Button */
+    .nav-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 44px;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .nav-btn.active {
+      background: transparent;
+      color: #B83EBF;
+      font-weight: 600;
+    }
+    .nav-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 3px;
+      background: #B83EBF;
+      border-radius: var(--radius-full) var(--radius-full) 0 0;
+    }
+    .nav-btn:hover:not(.active) {
+      background: transparent;
+      color: #A12EB8;
+    }
+    .nav-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      flex-shrink: 0;
+    }
+    
+    #user-status {
+      display: none;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .cart-indicator {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: var(--space-sm) var(--space-md);
+      background: transparent;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 72px);
+      max-width: var(--max-width);
+      margin: 0 auto;
+      gap: var(--space-xl);
+      padding: var(--space-xl) var(--space-lg);
+      align-items: start;
+    }
+    main{ 
+      padding: 0;
+      width: 100%;
+    }
+    aside {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-sm);
+      height: fit-content;
+      position: sticky;
+      top: calc(72px + var(--space-xl));
+      align-self: start;
+    }
+    main {
+      padding: 0;
+    }
+    h1 {
+      margin-top: 0;
+      margin-bottom: var(--space-lg);
+      font-family: var(--font-graffiti);
+      font-size: 42px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: var(--space-md);
+      font-family: var(--font-graffiti);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    h3 {
+      margin-top: 0;
+      margin-bottom: var(--space-md);
+      font-family: var(--font-graffiti);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    h4 {
+      margin-top: 0;
+      margin-bottom: var(--space-sm);
+      font-family: var(--font-graffiti);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--space-xl);
+    }
+    /* Standardized Category Item */
+    .category-item {
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-xs);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition-base);
+      min-height: var(--touch-target);
+      display: flex;
+      align-items: center;
+    }
+    .category-item.active {
+      background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+      color: #FFFFFF;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+    }
+    .category-item:hover:not(.active) {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    .category-item:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .filter-block {
+      margin-top: var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+    .filter-block label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .search-input {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 12px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 15px;
+      transition: all var(--transition-base);
+      min-height: var(--touch-target);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: var(--focus-ring);
+      background: var(--surface);
+    }
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    /* Standardized Ad Block */
+    .ad-block {
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(184,62,191,0.15), rgba(161,46,184,0.12));
+      border: 1px solid rgba(184,62,191,0.3);
+      color: var(--text-primary);
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .ad-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-xs);
+    }
+    .ad-content {
+      margin-top: var(--space-xs);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+
+    /* Hero banner / promo above products */
+    /* Standardized Hero Ad */
+    .hero-ad {
+      border-radius: 16px;
+      padding: var(--space-lg) var(--space-xl);
+      background: linear-gradient(135deg, rgba(184,62,191,0.15), rgba(161,46,184,0.12));
+      border: 1px solid rgba(184,62,191,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-ad .cta { 
+      background: #D8FF3F; 
+      color: #0F0F0F; 
+      padding: var(--space-md) var(--space-xl); 
+      border-radius: 12px; 
+      font-family: var(--font-graffiti);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-height: var(--touch-target);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
+    }
+    .hero-ad .cta:hover {
+      background: #E6FF7A;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
+    }
+
+    /* Homepage Hero Section - Balanced & Modern */
+    .hero-section {
+      /* Original brand colors with subtle overlay to reduce saturation by 10-15% */
+      background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+      border-radius: 16px;
+      padding: 30px 28px 25px 28px;
+      margin-bottom: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 280px;
+      max-height: 320px;
+      justify-content: center;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      /* Subtle white overlay to reduce saturation by ~12% while keeping brand colors */
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hero-logo {
+      max-width: 160px;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      margin-top: 0;
+      margin-bottom: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    
+    .hero-headline {
+      font-family: var(--font-graffiti);
+      font-size: clamp(22px, 2.8vw, 34px);
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin: 0;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-subheadline {
+      font-family: var(--font-graffiti);
+      font-size: clamp(11px, 1.4vw, 13px);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.5;
+      margin: 0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      max-width: 600px;
+    }
+    
+    .hero-cta {
+      background: #D8FF3F;
+      color: #0F0F0F;
+      padding: var(--space-md) var(--space-xl);
+      border-radius: 12px;
+      font-family: var(--font-graffiti);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-height: 48px;
+      min-width: 180px;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(216, 255, 63, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-xs);
+    }
+    
+    .hero-cta:hover {
+      background: #E6FF7A;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(216, 255, 63, 0.5);
+    }
+    
+    .hero-cta:active {
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 800px) {
+      .hero-section {
+        padding: 20px 20px 20px 20px;
+        margin-bottom: var(--space-lg);
+        min-height: 220px;
+        max-height: 260px;
+      }
+      
+      .hero-content {
+        gap: var(--space-xs);
+      }
+      
+      .hero-logo {
+        max-width: 115px;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      
+      .hero-headline {
+        font-size: clamp(17px, 3.5vw, 22px);
+        margin-bottom: 0;
+      }
+      
+      .hero-subheadline {
+        font-size: clamp(10px, 2.5vw, 11px);
+        margin-bottom: 0;
+      }
+      
+      .hero-cta {
+        padding: var(--space-sm) var(--space-lg);
+        font-size: 14px;
+        min-height: 44px;
+        min-width: 160px;
+        margin-top: 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 36px 20px;
+        min-height: 260px;
+        max-height: 320px;
+      }
+      
+      .hero-headline {
+        font-size: 24px;
+      }
+      
+      .hero-subheadline {
+        font-size: 14px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 60px var(--space-md);
+      }
+    }
+
+    /* Carousel styles - horizontal scrolling layout */
+    .hero-carousel { 
+      margin-bottom: var(--space-xl); 
+      position: relative; 
+      overflow: hidden;
+    }
+    .hero-carousel .carousel-slides { 
+      display: flex; 
+      flex-direction: row;
+      gap: var(--space-lg); 
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-medium) var(--bg-secondary);
+      padding-bottom: var(--space-sm);
+      -webkit-overflow-scrolling: touch;
+    }
+    .hero-carousel .carousel-slides::-webkit-scrollbar {
+      height: 8px;
+    }
+    .hero-carousel .carousel-slides::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-full);
+    }
+    .hero-carousel .carousel-slides::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: var(--radius-full);
+    }
+    .hero-carousel .carousel-slides::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-light);
+    }
+    /* Standardized Hero Carousel Slide */
+    .hero-carousel .carousel-slide { 
+      display: flex; 
+      flex-direction: column;
+      gap: var(--space-md); 
+      align-items: flex-start; 
+      padding: var(--space-xl); 
+      border-radius: 16px; 
+      background: var(--surface);
+      border: 1px solid var(--border-light); 
+      box-shadow: var(--shadow-md); 
+      opacity: 1; 
+      transform: translateY(0); 
+      transition: all var(--transition-base);
+      flex: 0 0 auto;
+      min-width: 300px;
+      max-width: 380px;
+      width: 100%;
+    }
+    @media (min-width: 1200px) {
+      .hero-carousel .carousel-slide {
+        min-width: 350px;
+        max-width: 420px;
+      }
+    }
+    .hero-carousel .carousel-slide:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--border-medium);
+    }
+    .hero-carousel .carousel-slide.active { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+    .hero-carousel .slide-media { 
+      width: 100%; 
+      min-height: 180px; 
+      border-radius: 12px; 
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-carousel .slide-media img{ 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      display: block; 
+    }
+    .hero-carousel .slide-body { 
+      padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      gap: var(--space-md); 
+      flex: 1;
+      width: 100%;
+    }
+    .hero-carousel .slide-title{ 
+      font-family: var(--font-graffiti);
+      font-size: 26px; 
+      font-weight: 400; 
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .hero-carousel .slide-sub{ 
+      color: var(--text-secondary); 
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .hero-carousel .slide-cta .cta{ 
+      border: none; 
+      cursor: pointer; 
+      border-radius: 12px; 
+      padding: var(--space-md) var(--space-xl); 
+      background: #D8FF3F; 
+      color: #0F0F0F; 
+      font-family: var(--font-graffiti);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-height: var(--touch-target);
+      transition: all var(--transition-base);
+      align-self: flex-start;
+      box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
+    }
+    .hero-carousel .slide-cta .cta:hover {
+      background: #E6FF7A;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
+    }
+    .hero-carousel .carousel-controls{ 
+      display: none; 
+    }
+    .hero-carousel .carousel-indicators{ 
+      display: none; 
+    }
+
+    /* Mobile bottom bar for quick actions */
+    #mobile-bar{ 
+      display: none; 
+    }
+    @media (max-width: 800px){
+      .layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+        padding: var(--space-lg);
+      }
+      
+      aside {
+        position: static;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+      }
+      
+      .hero-carousel .carousel-slide{ 
+        flex-direction: column; 
+        padding: var(--space-lg);
+        min-width: 280px;
+        max-width: 320px;
+      }
+      .hero-carousel .slide-media{ 
+        width: 100%; 
+        height: 180px; 
+      }
+      .hero-carousel .slide-body{ 
+        align-items: flex-start; 
+      }
+      .hero-carousel .slide-title {
+        font-size: 20px;
+      }
+      
+      body {
+        padding-bottom: 100px; /* Space for mobile bar */
+      }
+      
+      #mobile-bar{ 
+        display: flex; 
+        position: fixed; 
+        left: var(--space-md); 
+        right: var(--space-md); 
+        bottom: var(--space-md); 
+        gap: var(--space-md); 
+        z-index: 9998;
+        padding: var(--space-md);
+        background: var(--surface);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-light);
+        max-width: calc(100vw - 2 * var(--space-md));
+      }
+      /* Standardized Mobile Bar Buttons */
+      #mobile-bar .bar-btn{ 
+        flex: 1; 
+        padding: var(--space-md) var(--space-lg); 
+        border-radius: 12px; 
+        border: none; 
+        font-family: var(--font-graffiti);
+        font-weight: 600; 
+        font-size: 15px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        cursor: pointer;
+        min-height: var(--touch-target-lg);
+        transition: all var(--transition-base);
+      }
+      #mobile-bar .bar-cart{ 
+        background: #D8FF3F; 
+        color: #0F0F0F;
+        box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
+      }
+      #mobile-bar .bar-cart:hover {
+        background: #E6FF7A;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
+      }
+      #mobile-bar .bar-shop{ 
+        background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+        color: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(184, 62, 191, 0.3);
+      }
+      #mobile-bar .bar-shop:hover {
+        background: linear-gradient(135deg, #C85ECF 0%, #B83EBF 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(184, 62, 191, 0.4);
+      }
+      
+      /* make buttons larger for touch */
+      .btn, .nav-btn, .nav-toggle{ 
+        padding: var(--space-md) var(--space-lg); 
+        min-height: var(--touch-target-lg);
+      }
+      
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: var(--space-md);
+      }
+      
+      .card {
+        padding: var(--space-md);
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 480px){
+      html {
+        font-size: 15px;
+      }
+      
+      header {
+        padding: 0;
+        padding-left: 12px;
+        padding-right: var(--space-md);
+        height: 60px;
+        min-height: 60px;
+      }
+      
+      .layout {
+        padding: var(--space-md);
+      }
+      
+      .hero-carousel .carousel-slide {
+        min-width: 260px;
+        max-width: 300px;
+      }
+      .hero-carousel .slide-media{ 
+        height: 160px; 
+      }
+      .hero-carousel .slide-title{ 
+        font-size: 16px; 
+      }
+      
+      .products-grid{ 
+        grid-template-columns: 1fr; 
+      }
+      
+      .map-shell{ 
+        height: 240px; 
+      }
+      
+      .two-col{ 
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+      
+      .brand-title {
+        font-size: 18px;
+      }
+      
+    }
+    /* Standardized Card Styles */
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: var(--space-lg);
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      height: 100%;
+    }
+    .card:hover{ 
+      transform: translateY(-2px); 
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+    .card-media{ 
+      height: 200px; 
+      border-radius: 12px; 
+      background: var(--bg-secondary); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: var(--text-muted); 
+      font-weight: 600; 
+      font-size: 14px;
+      overflow: hidden;
+    }
+    .card{ 
+      opacity: 0; 
+      transform: translateY(8px); 
+      animation: fadeUp .4s ease forwards; 
+    }
+    @keyframes fadeUp{ 
+      from{ opacity: 0; transform: translateY(8px); } 
+      to{ opacity: 1; transform: translateY(0); } 
+    }
+    .card-media img{ 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      border-radius: 12px; 
+      display: block; 
+    }
+    /* skeleton shimmer for image loading */
+    .skeleton{ 
+      position: relative; 
+      overflow: hidden; 
+      background: linear-gradient(90deg, var(--bg-secondary), var(--bg-tertiary), var(--bg-secondary));
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes shimmer{ 
+      0%{ background-position: 200% 0; } 
+      100%{ background-position: -200% 0; } 
+    }
+    .img-loaded{ 
+      transition: opacity .3s ease; 
+      opacity: 1; 
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+      flex: 1;
+      font-family: var(--font-body);
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      min-height: 40px;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: var(--space-sm);
+      gap: var(--space-md);
+    }
+    .price {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.01em;
+      font-family: var(--font-body);
+    }
+    /* Standardized Button Styles */
+    .btn {
+      border: none;
+      cursor: pointer;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: var(--touch-target);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+    }
+    
+    /* Primary Button - Neon Yellow/Green */
+    .btn-primary {
+      background: #D8FF3F;
+      color: #0F0F0F;
+      font-family: var(--font-graffiti);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
+    }
+    .btn-primary:hover {
+      background: #E6FF7A;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(216, 255, 63, 0.4);
+    }
+    
+    /* Secondary Button - Purple Gradient */
+    .btn-outline,
+    .btn-secondary {
+      background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 4px 12px rgba(184, 62, 191, 0.3);
+    }
+    .btn-outline:hover,
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #C85ECF 0%, #B83EBF 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(184, 62, 191, 0.4);
+    }
+    .btn-outline:active,
+    .btn-secondary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(184, 62, 191, 0.3);
+    }
+    .btn:focus-visible, .nav-btn:focus-visible, .nav-toggle:focus-visible { 
+      outline: none; 
+      box-shadow: var(--focus-ring); 
+    }
+
+    /* Standardized Toast Notification */
+    .toast {
+      position: fixed;
+      right: var(--space-lg);
+      bottom: var(--space-lg);
+      min-width: 280px;
+      max-width: min(400px, calc(100vw - 2 * var(--space-lg)));
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      padding: var(--space-lg);
+      border-radius: 16px;
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+      transition: transform 300ms cubic-bezier(.2,.9,.2,1), opacity 300ms ease;
+      z-index: 9999;
+    }
+    .toast.show { 
+      transform: translateY(0) scale(1); 
+      opacity: 1; 
+    }
+    .toast .toast-actions { 
+      margin-left: auto; 
+      display: flex; 
+      gap: var(--space-sm); 
+    }
+    
+    @media (max-width: 800px) {
+      .toast {
+        right: var(--space-md);
+        bottom: calc(var(--space-md) + 100px); /* Above mobile bar */
+        left: var(--space-md);
+        max-width: none;
+        width: calc(100vw - 2 * var(--space-md));
+      }
+    }
+    .toast .toast-actions .btn { 
+      padding: var(--space-sm) var(--space-md); 
+      font-size: 13px; 
+      min-height: 36px;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .row {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+      display: block;
+    }
+    /* Standardized Input Styles */
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 15px;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 12px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      width: 100%;
+      min-height: var(--touch-target);
+      transition: all var(--transition-base);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: var(--focus-ring);
+      background: var(--surface);
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.5;
+    }
+    input[type="checkbox"] {
+      min-height: auto;
+      width: auto;
+      margin-right: var(--space-sm);
+      cursor: pointer;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .table th, .table td {
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-md);
+      text-align: left;
+    }
+    .table th {
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+    .table td {
+      color: var(--text-secondary);
+    }
+    .table tr:hover td {
+      background: var(--bg-secondary);
+    }
+    /* Standardized Badge/Pill/Tag Styles */
+    .badge,
+    .pill,
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: 12px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      font-weight: 500;
+      border: 1px solid var(--border-light);
+    }
+    
+    /* Standardized Map Shell */
+    .map-shell {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      padding: var(--space-lg);
+      font-size: 14px;
+      color: var(--text-secondary);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-md);
+    }
+    .map-placeholder {
+      flex: 1;
+      border-radius: 12px;
+      border: 2px dashed var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+    }
+    /* Standardized Notice */
+    .notice {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding: var(--space-md);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-light);
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      font-size: 14px;
+    }
+    /* Standardized Chip */
+    .chip {
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: 12px;
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: all var(--transition-base);
+      min-height: var(--touch-target);
+      display: inline-flex;
+      align-items: center;
+    }
+    .chip:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-tertiary);
+    }
+    .chip.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-color: var(--primary);
+      color: var(--text-inverse);
+      box-shadow: 0 4px 12px rgba(184, 62, 191, 0.3);
+    }
+    .chip:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .text-muted {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    @media (max-width: 800px) {
+      header {
+        padding: 0;
+        padding-left: 12px;
+        padding-right: var(--space-md);
+        height: 64px;
+        min-height: 64px;
+      }
+      
+      .nav-toggle{ 
+        display: inline-flex; 
+        background: transparent;
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+      }
+      
+      nav{ 
+        position: absolute; 
+        left: 0;
+        right: 0;
+        top: 100%; 
+        display: none; 
+        flex-direction: column; 
+        background: #0F0F0F; 
+        padding: var(--space-md); 
+        border-bottom: 1px solid var(--border-light);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        gap: var(--space-xs);
+        align-items: stretch;
+      }
+      
+      nav.open{ 
+        display: flex; 
+        animation: navFade .2s ease; 
+      }
+      
+      @keyframes navFade{ 
+        from{ opacity: 0; transform: translateY(-8px); } 
+        to{ opacity: 1; transform: translateY(0); } 
+      }
+      
+      .nav-btn {
+        width: 100%;
+        justify-content: flex-start;
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-md);
+      }
+      
+      .nav-btn.active::after {
+        left: 0;
+        transform: none;
+        width: 4px;
+        height: 100%;
+        border-radius: var(--radius-md) 0 0 var(--radius-md);
+      }
+      
+      .brand,
+      .brand-link {
+        flex: 0 0 auto;
+        margin-left: 0;
+      }
+      
+      .brand-logo {
+        max-width: 110px;
+        height: auto;
+      }
+      
+      .header-right {
+        gap: var(--space-sm);
+        margin-left: auto;
+        flex-wrap: wrap;
+      }
+      
+      #user-status {
+        flex-wrap: wrap;
+      }
+      
+      .cart-indicator {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header>
+    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+        <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+        <rect x="3" y="16" width="12" height="2" rx="1" fill="currentColor" />
+      </svg>
+    </button>
+    <a href="/" class="brand-link">
+      <img class="brand-logo" src="assets/ZipMetroLogoRemoveBG (1).png" alt="ZipMetro" />
+    </a>
+    <nav id="site-nav" role="navigation" aria-label="Primary navigation">
+      <button class="nav-btn active" data-section="shop-section">Shop</button>
+      <button class="nav-btn" data-section="cart-section">Cart</button>
+      <button class="nav-btn" data-section="account-section">Account & ID</button>
+      <button class="nav-btn" data-section="admin-section">Admin</button>
+    </nav>
+    <div class="header-right">
+      <div class="cart-indicator">
+        Cart: <span id="cart-count">0</span> items
+      </div>
+      <div id="user-status">
+        <span id="user-email"></span>
+        <button id="logout-btn" class="btn btn-outline" style="padding: var(--space-xs) var(--space-sm); font-size: 12px; min-height: auto;">Logout</button>
+      </div>
+      <button id="login-toggle-btn" class="btn btn-outline" style="padding: var(--space-sm) var(--space-md); font-size: 13px; min-height: 44px;">Login</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h3>Categories</h3>
+      <ul class="category-list" id="category-list">
+        <li class="category-item active" data-category="Flower">Flower</li>
+        <li class="category-item" data-category="Vape">Vape</li>
+        <li class="category-item" data-category="Extracts">Extracts</li>
+        <li class="category-item" data-category="Edibles">Edibles</li>
+      </ul>
+
+      <div class="filter-block">
+        <div style="margin-bottom: 6px;">Search products</div>
+        <input id="search-input" class="search-input" placeholder="Type to filter…" />
+      </div>
+
+      <div class="ad-block" id="ad-block">
+        <div class="ad-title">Featured Deal</div>
+        <div class="ad-content" id="ad-content">
+          25% off first order · Free delivery over $100.
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-content">
+      <!-- SHOP SECTION -->
+      <section id="shop-section" class="section active">
+        <!-- Hero Banner Section -->
+        <div class="hero-section">
+          <div class="hero-content">
+            <img class="hero-logo" src="assets/ZipMetroLogoRemoveBG (1).png" alt="ZipMetro" />
+            <h1 class="hero-headline">Same-Day Delivery<br/>Age-Verified & Secure</h1>
+            <p class="hero-subheadline">Premium cannabis products delivered to your door. Fast, discreet, and fully compliant.</p>
+          </div>
+        </div>
+        
+        <h2>Shop ZipMetro</h2>
+        <p class="text-muted" style="margin-bottom: var(--space-xl); font-size: 16px; line-height: 1.6;">Browse by category, add to cart, and check out when you're ready. Mapping, ID, and notifications are handled at checkout.</p>
+        <div class="products-grid" id="products-grid"></div>
+      </section>
+
+      <!-- CART SECTION -->
+      <section id="cart-section" class="section">
+        <h2>Checkout & Delivery</h2>
+        <div class="two-col">
+          <div class="stack">
+            <div class="card">
+              <h3>Cart</h3>
+              <div id="cart-items"></div>
+              <div class="row" style="justify-content: space-between; margin-top: 10px;">
+                <span>Total: <strong id="cart-total">$0.00</strong></span>
+                <button class="btn btn-outline" id="clear-cart-btn">Clear cart</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Delivery Details</h3>
+              <div class="stack">
+                <div class="row">
+                  <div style="flex:1;">
+                    <label>Full name</label>
+                    <input id="checkout-name" placeholder="Customer name" />
+                  </div>
+                  <div style="flex:1;">
+                    <label>Phone</label>
+                    <input id="checkout-phone" placeholder="(555) 555-5555" />
+                  </div>
+                </div>
+                <div>
+                  <label>Delivery address</label>
+                  <input id="checkout-address" placeholder="Street, city, ZIP" />
+                </div>
+                <div class="row">
+                  <div style="flex:1;">
+                    <label>Preferred delivery window</label>
+                    <select id="checkout-window">
+                      <option value="ASAP">ASAP (60–90 min)</option>
+                      <option value="Today PM">Today PM</option>
+                      <option value="Tonight">Tonight</option>
+                    </select>
+                  </div>
+                  <div style="flex:1;">
+                    <label>Order notes (optional)</label>
+                    <input id="checkout-notes" placeholder="Gate code, buzzer, etc." />
+                  </div>
+                </div>
+                <div>
+                  <label>
+                    <input type="checkbox" id="checkout-age-confirm" />
+                    I confirm I am 21+ and will present valid ID on delivery.
+                  </label>
+                </div>
+                <button class="btn btn-primary" id="place-order-btn">Place order</button>
+                <div class="notice">
+                  This is a demo front-end only. Real payments, age verification, and compliance logic would be wired to your backend/API.
+                </div>
+                <div id="order-status" class="text-muted"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="map-shell">
+            <div class="row" style="justify-content: space-between;">
+              <span>Delivery mapping</span>
+              <span class="badge">Stubbed · Ready for API</span>
+            </div>
+            <div class="map-placeholder">
+              Map placeholder – plug in Google Maps, Mapbox, or other provider here
+              using address + driver location.
+            </div>
+            <div class="notice">
+              In production you’d show:
+              <ul style="margin: 4px 0 0 16px; padding: 0;">
+                <li>Customer address marker</li>
+                <li>Driver real-time location</li>
+                <li>ETA updates pushed via notifications</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACCOUNT & ID SECTION -->
+      <section id="account-section" class="section">
+        <h2>Account, ID Upload & Notifications</h2>
+        
+        <!-- Login/Register Section -->
+        <div id="login-register-section" class="card" style="margin-bottom: var(--space-xl);">
+          <h3>Login / Register</h3>
+          <div class="stack">
+            <div class="row" style="gap: var(--space-lg);">
+              <div style="flex: 1;">
+                <h4 style="margin-bottom: var(--space-md); font-size: 16px;">Login</h4>
+                <div class="stack">
+                  <div>
+                    <label>Email</label>
+                    <input id="login-email" type="email" placeholder="admin@zipmetro.com" />
+                  </div>
+                  <div>
+                    <label>Password</label>
+                    <input id="login-password" type="password" placeholder="Password" />
+                  </div>
+                  <button class="btn btn-primary" id="login-btn">Login</button>
+                  <div id="login-status" class="text-muted"></div>
+                </div>
+              </div>
+              <div style="flex: 1;">
+                <h4 style="margin-bottom: var(--space-md); font-size: 16px;">Register</h4>
+                <div class="stack">
+                  <div>
+                    <label>Email</label>
+                    <input id="register-email" type="email" placeholder="your@email.com" />
+                  </div>
+                  <div>
+                    <label>Password</label>
+                    <input id="register-password" type="password" placeholder="Password" />
+                  </div>
+                  <div class="row">
+                    <div style="flex:1;">
+                      <label>First Name</label>
+                      <input id="register-first-name" placeholder="First name" />
+                    </div>
+                    <div style="flex:1;">
+                      <label>Last Name</label>
+                      <input id="register-last-name" placeholder="Last name" />
+                    </div>
+                  </div>
+                  <button class="btn btn-outline" id="register-btn">Register</button>
+                  <div id="register-status" class="text-muted"></div>
+                </div>
+              </div>
+            </div>
+            <div class="notice" style="margin-top: var(--space-md);">
+              <strong>Default Admin:</strong> admin@zipmetro.com / admin123
+            </div>
+          </div>
+        </div>
+        
+        <div class="two-col">
+          <div class="card">
+            <h3>Upload ID (one-time)</h3>
+            <div class="stack">
+              <div class="row">
+                <div style="flex:1;">
+                  <label>First name</label>
+                  <input id="id-first-name" />
+                </div>
+                <div style="flex:1;">
+                  <label>Last name</label>
+                  <input id="id-last-name" />
+                </div>
+              </div>
+              <div class="row">
+                <div style="flex:1;">
+                  <label>Date of birth</label>
+                  <input id="id-dob" type="date" />
+                </div>
+                <div style="flex:1;">
+                  <label>ID type</label>
+                  <select id="id-type">
+                    <option value="Drivers license">Driver’s license</option>
+                    <option value="State ID">State ID</option>
+                    <option value="Passport">Passport</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label>Upload ID image (front)</label>
+                <input id="id-file" type="file" accept="image/*" />
+              </div>
+              <div>
+                <label>
+                  <input type="checkbox" id="id-consent" />
+                  I consent to ZipMetro storing my ID for age verification in compliance with local laws.
+                </label>
+              </div>
+              <button class="btn btn-primary" id="submit-id-btn">Submit ID</button>
+              <div id="id-status" class="text-muted"></div>
+              <div class="notice">
+                In a real app this would hit a secure backend + KYC/ID verification service,
+                with proper encryption and retention rules.
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Notification preferences</h3>
+            <div class="stack">
+              <div class="chip-row" id="notif-chips">
+                <div class="chip active" data-channel="sms">SMS</div>
+                <div class="chip active" data-channel="email">Email</div>
+                <div class="chip" data-channel="push">Push (app)</div>
+              </div>
+              <div class="notice">
+                These preferences will be used for:
+                <ul style="margin: 4px 0 0 16px; padding: 0;">
+                  <li>Order status: received, out for delivery, delivered</li>
+                  <li>Critical updates: driver delays, address issues</li>
+                  <li>Optional promos (if enabled in admin)</li>
+                </ul>
+              </div>
+              <button class="btn btn-outline" id="save-notif-btn">Save preferences</button>
+              <div id="notif-status" class="text-muted"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN SECTION -->
+      <section id="admin-section" class="section">
+        <h2>Admin · ZipMetro Control</h2>
+        <p class="text-muted" style="margin-bottom: var(--space-xl); font-size: 16px; line-height: 1.6;">This is a front-end-only admin stub. In production this would be behind auth and wired to your backend.</p>
+
+        <div class="stack">
+          <div class="two-col">
+            <div class="card">
+              <h3>High-level metrics (mock)</h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Today</th>
+                    <th>7-day</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Orders</td>
+                    <td>18</td>
+                    <td>122</td>
+                  </tr>
+                  <tr>
+                    <td>GMV</td>
+                    <td>$2,340</td>
+                    <td>$14,920</td>
+                  </tr>
+                  <tr>
+                    <td>Avg basket</td>
+                    <td>$130</td>
+                    <td>$122</td>
+                  </tr>
+                  <tr>
+                    <td>Repeat customers</td>
+                    <td>62%</td>
+                    <td>58%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <h3>Advertising slot (homepage banner)</h3>
+              <div class="stack">
+                <label for="admin-ad-text">Banner copy</label>
+                <textarea id="admin-ad-text" placeholder="e.g. Mix & Match quarters · Any 4 for $99."></textarea>
+                <button class="btn btn-primary" id="save-ad-btn">Save ad</button>
+                <div class="notice">
+                  This feeds the “Featured Deal” unit in the left sidebar on all customer views.
+                </div>
+                <div id="admin-ad-status" class="text-muted"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Product catalog (demo)</h3>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom: var(--space-md);">
+                <input id="admin-new-name" placeholder="Name" style="min-width:160px;" />
+                <select id="admin-new-category">
+                  <option value="Flower">Flower</option>
+                  <option value="Vape">Vape</option>
+                  <option value="Extracts">Extracts</option>
+                  <option value="Edibles">Edibles</option>
+                </select>
+                <input id="admin-new-price" placeholder="Price" type="number" style="width:100px;" />
+                <input id="admin-new-thc" placeholder="THC mg" type="number" style="width:100px;" />
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom: var(--space-md);">
+                <div style="flex: 1; min-width: 200px;">
+                  <label style="display: block; margin-bottom: var(--space-xs); font-size: 13px; font-weight: 600;">Upload Image</label>
+                  <input id="admin-new-image-file" type="file" accept="image/*" style="width: 100%; padding: var(--space-sm);" />
+                  <div id="image-preview" style="margin-top: var(--space-sm); display: none;">
+                    <img id="preview-img" src="" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: var(--radius-md); border: 1px solid var(--border-light);" />
+                    <button type="button" id="remove-preview" class="btn btn-outline" style="margin-top: var(--space-xs); padding: var(--space-xs) var(--space-sm); font-size: 12px;">Remove</button>
+                  </div>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                  <label style="display: block; margin-bottom: var(--space-xs); font-size: 13px; font-weight: 600;">Or Enter Image URL</label>
+                  <input id="admin-new-image-url" placeholder="Image URL (optional)" style="width: 100%;" />
+                </div>
+              </div>
+              <button class="btn btn-primary" id="add-product-btn">Add product</button>
+            </div>
+            <table class="table" id="admin-products-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>THC mg</th>
+                  <th>Price</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated from JS -->
+              </tbody>
+            </table>
+            <div class="notice">
+              In production this table would be editable with create/update/delete actions,
+              plus inventory counts and store/brand associations.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite" hidden></div>
+
+  <script>
+    // Handle missing logo image - hide container if image fails to load
+    (function() {
+      const brandLogo = document.querySelector('.brand-logo');
+      const brandLink = document.querySelector('.brand-link');
+      
+      if (brandLogo && brandLink) {
+        // Check if image src is empty or invalid
+        if (!brandLogo.src || brandLogo.src.includes('undefined') || brandLogo.src.includes('null') || brandLogo.src === window.location.href) {
+          brandLink.style.display = 'none';
+        }
+        
+        // Handle image load error
+        brandLogo.addEventListener('error', function() {
+          brandLink.style.display = 'none';
+        });
+        
+        // Handle successful image load
+        brandLogo.addEventListener('load', function() {
+          brandLink.style.display = 'inline-flex';
+        });
+      }
+    })();
+  </script>
+
+  <div id="mobile-bar" aria-hidden="false">
+    <button class="bar-btn bar-shop" onclick="switchSection('shop-section')">Shop</button>
+    <button class="bar-btn bar-cart" onclick="switchSection('cart-section')">Cart (<span id="mobile-cart-count">0</span>)</button>
+  </div>
+
+  <script>
+    // Mobile nav toggle
+    (function(){
+      const navToggle = document.querySelector('.nav-toggle');
+      const nav = document.getElementById('site-nav');
+      if(navToggle && nav){
+        navToggle.addEventListener('click', ()=>{
+          const open = nav.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        // close nav after selecting
+        nav.querySelectorAll('.nav-btn').forEach(b=> b.addEventListener('click', ()=>{
+          nav.classList.remove('open');
+          navToggle.setAttribute('aria-expanded','false');
+        }));
+        // close nav if focus leaves (small helper)
+        document.addEventListener('click', (e)=>{
+          if(!nav.contains(e.target) && !navToggle.contains(e.target)){
+            nav.classList.remove('open'); navToggle.setAttribute('aria-expanded','false');
+          }
+        });
+      }
+    })();
+
+    // Toast micro-interaction: shows a small dismissible notification
+    function showToast(message, actionLabel, actionCallback, timeout = 4500){
+      const el = document.getElementById('toast');
+      if(!el) return;
+      el.hidden = false;
+      el.innerHTML = `
+        <div class="toast-body" style="font-size:13px; line-height:1.2;">${message}</div>
+        <div class="toast-actions">
+          <button id="toast-close" class="btn btn-outline">Close</button>
+          <button id="toast-action" class="btn btn-primary">${actionLabel || 'OK'}</button>
+        </div>
+      `;
+      // animate in
+      requestAnimationFrame(()=> el.classList.add('show'));
+
+      function cleanup(){
+        el.classList.remove('show');
+        setTimeout(()=>{ el.hidden = true; el.innerHTML = ''; }, 260);
+      }
+
+      document.getElementById('toast-close').addEventListener('click', cleanup, { once: true });
+      document.getElementById('toast-action').addEventListener('click', ()=>{ try{ actionCallback && actionCallback(); } catch(e){} cleanup(); }, { once: true });
+      // auto-dismiss
+      setTimeout(()=>{ cleanup(); }, timeout);
+    }
+    // products are loaded from the backend API (products.json) on startup
+    let products = [];
+
+    // fallback dataset so the app still shows example products if no backend server is running
+    const fallbackProducts = [
+      { id: 1, name: "Sunset Sherbet", category: "Flower", desc: "Hybrid · Smooth, creamy, evening friendly.", price: 45, thc: 25, image: "https://picsum.photos/seed/sunset-sherbet/800/440" },
+      { id: 2, name: "ZipMetro House OG", category: "Flower", desc: "Indica-leaning classic with heavy body feel.", price: 40, thc: 27, image: "https://picsum.photos/seed/house-og/800/440" },
+      { id: 9, name: "Lemon Gaze", category: "Flower", desc: "Citrus sativa-leaning · bright and clear.", price: 38, thc: 22, image: "https://picsum.photos/seed/lemon-gaze/800/440" },
+      { id: 10, name: "Royal Kush", category: "Flower", desc: "Relaxing indica · couch-lock friendly.", price: 50, thc: 29, image: "https://picsum.photos/seed/royal-kush/800/440" },
+      { id: 11, name: "Blue Velvet", category: "Flower", desc: "Balanced Hybrid · smooth flavor.", price: 42, thc: 24, image: "https://picsum.photos/seed/blue-velvet/800/440" },
+      { id: 12, name: "Cali Dream", category: "Flower", desc: "Tropical terp profile · daytime use.", price: 44, thc: 26, image: "https://picsum.photos/seed/cali-dream/800/440" },
+
+      { id: 3, name: "Electric Haze Vape 1g", category: "Vape", desc: "Sativa cart · citrus & pine, day-time vibes.", price: 35, thc: 90, image: "https://picsum.photos/seed/electric-haze/800/440" },
+      { id: 4, name: "Night Drive Live Resin Cart", category: "Vape", desc: "Full-spectrum live resin · terp heavy.", price: 48, thc: 88, image: "https://picsum.photos/seed/night-drive/800/440" },
+      { id: 13, name: "Citrus Rush Cart", category: "Vape", desc: "Energetic sativa-forward cartridge.", price: 36, thc: 92, image: "https://picsum.photos/seed/citrus-rush/800/440" },
+      { id: 14, name: "Moonlight OG Cart", category: "Vape", desc: "Smooth indica cart for evenings.", price: 40, thc: 85, image: "https://picsum.photos/seed/moonlight-og/800/440" },
+      { id: 15, name: "Sparkle Hybrid 0.5g", category: "Vape", desc: "Compact pen · hybrid effects.", price: 28, thc: 75, image: "https://picsum.photos/seed/sparkle-hybrid/800/440" },
+      { id: 16, name: "High Noon 1g", category: "Vape", desc: "Daytime clarity · citrus notes.", price: 34, thc: 88, image: "https://picsum.photos/seed/high-noon/800/440" },
+
+      { id: 5, name: "Guava Punch Live Rosin", category: "Extracts", desc: "Cold-cured rosin · fruit forward and loud.", price: 65, thc: 76, image: "https://picsum.photos/seed/guava-punch/800/440" },
+      { id: 6, name: "Diamond Sauce – Metro Fuel", category: "Extracts", desc: "High potency diamonds in terp sauce.", price: 70, thc: 82, image: "https://picsum.photos/seed/diamond-sauce/800/440" },
+      { id: 17, name: "Crystal Shatter", category: "Extracts", desc: "High-clarity shatter for potency seekers.", price: 68, thc: 85, image: "https://picsum.photos/seed/crystal-shatter/800/440" },
+      { id: 18, name: "Rosin Live Stack", category: "Extracts", desc: "Solventless rosin · full flavor.", price: 72, thc: 80, image: "https://picsum.photos/seed/rosin-live/800/440" },
+      { id: 19, name: "Terp Sauce Reserve", category: "Extracts", desc: "Flavor-forward sauce with rich terps.", price: 75, thc: 78, image: "https://picsum.photos/seed/terp-sauce/800/440" },
+      { id: 20, name: "Ultra Diamonds", category: "Extracts", desc: "Top-shelf diamonds for advanced users.", price: 88, thc: 92, image: "https://picsum.photos/seed/ultra-diamonds/800/440" },
+
+      { id: 7, name: "Metro Mango Gummies 100mg", category: "Edibles", desc: "10 x 10mg pieces · mellow mango flavor.", price: 18, thc: 100, image: "https://picsum.photos/seed/mango-gummies/800/440" },
+      { id: 8, name: "NightCap Chocolates 200mg", category: "Edibles", desc: "8 x 25mg · rich dark chocolate squares.", price: 24, thc: 200, image: "https://picsum.photos/seed/nightcap-choco/800/440" },
+      { id: 21, name: "Citrus Chews 50mg", category: "Edibles", desc: "6 x 8.33mg chews · bright citrus.", price: 14, thc: 50, image: "https://picsum.photos/seed/citrus-chews/800/440" },
+      { id: 22, name: "Maple Bars 120mg", category: "Edibles", desc: "6 x 20mg bars · maple richness.", price: 22, thc: 120, image: "https://picsum.photos/seed/maple-bars/800/440" },
+      { id: 23, name: "Berry Blast Gummies 150mg", category: "Edibles", desc: "15 x 10mg · tangy berry mix.", price: 26, thc: 150, image: "https://picsum.photos/seed/berry-blast/800/440" },
+      { id: 24, name: "Espresso Bites 80mg", category: "Edibles", desc: "8 x 10mg · coffee-forward treats.", price: 19, thc: 80, image: "https://picsum.photos/seed/espresso-bites/800/440" }
+    ];
+
+    async function loadProductsFromApi(){
+      try{
+        const res = await fetch('/api/products');
+        if(!res.ok) throw new Error('Failed loading products');
+        products = await res.json();
+      }catch(e){
+        console.warn('Could not load products from API, falling back to client dataset.', e);
+        products = fallbackProducts.slice();
+      }
+      renderProducts();
+      renderAdminProducts();
+      updateCartIndicator();
+    }
+
+    let cart = [];
+    let currentCategory = "Flower";
+    let notifPrefs = { sms: true, email: true, push: false };
+    let currentUser = null;
+    let authToken = localStorage.getItem('authToken');
+
+    // Auth helpers
+    async function getAuthHeaders() {
+      const token = localStorage.getItem('authToken');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      return headers;
+    }
+
+    async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        updateUserStatus();
+        return false;
+      }
+      try {
+        const res = await fetch('/api/auth/verify', { headers: { 'Authorization': `Bearer ${token}` } });
+        if (res.ok) {
+          const data = await res.json();
+          currentUser = data.user;
+          updateUserStatus();
+          return true;
+        }
+      } catch (e) {
+        console.error('Auth check failed:', e);
+      }
+      localStorage.removeItem('authToken');
+      currentUser = null;
+      updateUserStatus();
+      return false;
+    }
+
+    function updateUserStatus() {
+      const userStatus = document.getElementById('user-status');
+      const loginBtn = document.getElementById('login-toggle-btn');
+      const userEmail = document.getElementById('user-email');
+      const loginSection = document.getElementById('login-register-section');
+      
+      if (currentUser) {
+        userStatus.style.display = 'flex';
+        loginBtn.style.display = 'none';
+        userEmail.textContent = currentUser.email + (currentUser.role === 'admin' ? ' (Admin)' : '');
+        if (loginSection) {
+          loginSection.style.display = 'none';
+        }
+      } else {
+        userStatus.style.display = 'none';
+        loginBtn.style.display = 'inline-flex';
+        if (loginSection) {
+          loginSection.style.display = 'block';
+        }
+      }
+    }
+
+    async function login(email, password) {
+      const statusEl = document.getElementById('login-status');
+      statusEl.textContent = 'Connecting...';
+      statusEl.style.color = 'var(--text-secondary)';
+      
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('authToken', data.token);
+          currentUser = data.user;
+          updateUserStatus();
+          showToast('Logged in successfully!', 'OK');
+          statusEl.textContent = 'Login successful!';
+          statusEl.style.color = 'var(--primary)';
+          document.getElementById('login-email').value = '';
+          document.getElementById('login-password').value = '';
+          return true;
+        } else {
+          let errorMessage = 'Unknown error';
+          try {
+            const error = await res.json();
+            errorMessage = error.error || `HTTP ${res.status}`;
+          } catch (e) {
+            errorMessage = `HTTP ${res.status} - ${res.statusText}`;
+          }
+          statusEl.textContent = 'Login failed: ' + errorMessage;
+          statusEl.style.color = 'var(--accent)';
+          return false;
+        }
+      } catch (e) {
+        console.error('Login error:', e);
+        let errorMessage = e.message;
+        
+        // Provide more helpful error messages
+        if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+          errorMessage = 'Cannot connect to server. Make sure the server is running on port 3001.';
+        } else if (e.message.includes('CORS')) {
+          errorMessage = 'CORS error. Check server configuration.';
+        }
+        
+        statusEl.textContent = 'Login failed: ' + errorMessage;
+        statusEl.style.color = 'var(--accent)';
+        return false;
+      }
+    }
+
+    async function register(email, password, firstName, lastName) {
+      const statusEl = document.getElementById('register-status');
+      statusEl.textContent = 'Connecting...';
+      statusEl.style.color = 'var(--text-secondary)';
+      
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName })
+        });
+        
+        if (res.ok || res.status === 201) {
+          const data = await res.json();
+          localStorage.setItem('authToken', data.token);
+          currentUser = data.user;
+          updateUserStatus();
+          showToast('Registration successful!', 'OK');
+          statusEl.textContent = 'Registration successful!';
+          statusEl.style.color = 'var(--primary)';
+          document.getElementById('register-email').value = '';
+          document.getElementById('register-password').value = '';
+          document.getElementById('register-first-name').value = '';
+          document.getElementById('register-last-name').value = '';
+          return true;
+        } else {
+          let errorMessage = 'Unknown error';
+          try {
+            const error = await res.json();
+            errorMessage = error.error || `HTTP ${res.status}`;
+          } catch (e) {
+            errorMessage = `HTTP ${res.status} - ${res.statusText}`;
+          }
+          statusEl.textContent = 'Registration failed: ' + errorMessage;
+          statusEl.style.color = 'var(--accent)';
+          return false;
+        }
+      } catch (e) {
+        console.error('Register error:', e);
+        let errorMessage = e.message;
+        
+        if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+          errorMessage = 'Cannot connect to server. Make sure the server is running on port 3001.';
+        } else if (e.message.includes('CORS')) {
+          errorMessage = 'CORS error. Check server configuration.';
+        }
+        
+        statusEl.textContent = 'Registration failed: ' + errorMessage;
+        statusEl.style.color = 'var(--accent)';
+        return false;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      currentUser = null;
+      updateUserStatus();
+      showToast('Logged out successfully', 'OK');
+    }
+
+    // Initialize auth on load
+    checkAuth();
+
+    // --- Helpers -----------------------------------------------------------
+    function formatMoney(v) {
+      return "$" + v.toFixed(2);
+    }
+
+    function updateCartIndicator() {
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cart-count").textContent = count;
+      const mobile = document.getElementById('mobile-cart-count');
+      if(mobile) mobile.textContent = count;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("products-grid");
+      const query = document.getElementById("search-input").value.toLowerCase().trim();
+
+      const filtered = products.filter(p =>
+        p.category === currentCategory &&
+        (!query || p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query))
+      );
+
+      grid.innerHTML = "";
+      if (!filtered.length) {
+        grid.innerHTML = "<div class='text-muted'>No products match that search in this category.</div>";
+        return;
+      }
+
+      // Insert responsive carousel hero above the products grid
+      const existingHero = document.querySelector('.hero-carousel');
+      if(!existingHero){
+        const carousel = document.createElement('div');
+        carousel.className = 'hero-carousel';
+        carousel.setAttribute('role', 'region');
+        carousel.setAttribute('aria-label', 'Promotions');
+        carousel.innerHTML = `
+          <div class="carousel-slides" aria-live="polite"></div>
+        `;
+        grid.parentNode.insertBefore(carousel, grid);
+
+        // sample slides (image, title, subtitle, cta)
+        const slides = [
+          { img: 'https://picsum.photos/seed/promo1/1200/420', title: 'Weekend Special', subtitle: '20% off selected strains · Code WEEKEND', cta: 'Shop deals' },
+          { img: 'https://picsum.photos/seed/promo2/1200/420', title: 'Free Delivery', subtitle: 'Free delivery over $75 this week only', cta: 'Learn more' },
+          { img: 'https://picsum.photos/seed/promo3/1200/420', title: 'New Arrivals', subtitle: 'Fresh live rosin and new gummies', cta: 'Browse new' }
+        ];
+
+        const slidesEl = carousel.querySelector('.carousel-slides');
+
+        // Create all slides and display them all at once
+        slides.forEach((s, i) => {
+          const sl = document.createElement('div');
+          sl.className = 'carousel-slide active';
+          sl.innerHTML = `
+            <div class="slide-media skeleton"><img src="${s.img}" alt="${s.title}" loading="lazy"/></div>
+            <div class="slide-body">
+              <div class="slide-title">${s.title}</div>
+              <div class="slide-sub">${s.subtitle}</div>
+              <div class="slide-cta"><button class="btn cta">${s.cta}</button></div>
+            </div>
+          `;
+          sl.dataset.index = i;
+          slidesEl.appendChild(sl);
+        });
+      }
+
+      // small helper: create an inline SVG placeholder as data URL (fallback)
+      function svgPlaceholder(text, w=600, h=360, id=0){
+        const bg1 = ['#0f1724','#04263a','#102030','#0b2330'][id % 4];
+        const bg2 = ['#071029','#052037','#081623','#071223'][id % 4];
+        const safe = text.replace(/&/g,'%26').replace(/#/g,'%23');
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>`+
+          `<defs><linearGradient id='g${id}' x1='0' x2='1'><stop offset='0' stop-color='${bg1}'/><stop offset='1' stop-color='${bg2}'/></linearGradient></defs>`+
+          `<rect width='100%' height='100%' fill='url(#g${id})'/>`+
+          `<text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='32' fill='rgba(230,238,248,0.95)'>${safe}</text>`+
+        `</svg>`;
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const imgUrl = p.image || svgPlaceholder(p.name.split(' ')[0], 800, 440, p.id);
+        card.innerHTML = `
+          <div class="card-media skeleton" aria-hidden="true">
+            <img src="${imgUrl}" alt="${p.name}" loading="lazy" />
+          </div>
+          <div class="card-header">
+            <div>
+              <div class="card-title">${p.name}</div>
+              <div class="text-muted" style="font-size:11px;">${p.category}</div>
+            </div>
+            <span class="tag">${p.thc} mg THC</span>
+          </div>
+          <div class="card-desc">${p.desc}</div>
+          <div class="card-footer">
+            <span class="price">${formatMoney(p.price)}</span>
+            <button class="btn btn-primary" data-add-id="${p.id}">Add to cart</button>
+          </div>
+        `;
+        // handle image load to remove skeleton and fade in
+        grid.appendChild(card);
+        const img = card.querySelector('.card-media img');
+        if(img){
+          img.style.opacity = '0';
+          img.addEventListener('load', ()=>{
+            const media = card.querySelector('.card-media');
+            if(media) media.classList.remove('skeleton');
+            img.classList.add('img-loaded');
+            img.style.opacity = '1';
+          });
+        }
+      });
+
+      grid.querySelectorAll("[data-add-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = parseInt(btn.getAttribute("data-add-id"), 10);
+          const existing = cart.find(i => i.id === id);
+          if (existing) existing.qty += 1;
+          else cart.push({ id, qty: 1 });
+          updateCartIndicator();
+          const product = products.find(p => p.id === id);
+          showToast(`${product ? product.name : 'Item'} added to cart`, 'View cart', () => switchSection('cart-section'));
+        });
+      });
+    }
+
+    function renderCart() {
+      const container = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+      container.innerHTML = "";
+
+      if (!cart.length) {
+        container.innerHTML = "<div class='text-muted'>Your cart is empty.</div>";
+        totalEl.textContent = "$0.00";
+        return;
+      }
+
+      let total = 0;
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.id);
+        if (!product) return;
+        const lineTotal = product.price * item.qty;
+        total += lineTotal;
+
+        const row = document.createElement("div");
+        row.className = "row";
+        row.style.justifyContent = "space-between";
+        row.style.marginBottom = "6px";
+        row.innerHTML = `
+          <div>
+            <div style="font-size:13px;">${product.name}</div>
+            <div class="text-muted">${item.qty} × ${formatMoney(product.price)}</div>
+          </div>
+          <div class="row">
+            <span style="font-size:13px; margin-right:8px;">${formatMoney(lineTotal)}</span>
+            <button class="btn btn-outline" data-minus-id="${product.id}">−</button>
+            <button class="btn btn-outline" data-plus-id="${product.id}">+</button>
+            <button class="btn btn-outline" data-remove-id="${product.id}">×</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      totalEl.textContent = formatMoney(total);
+
+      container.querySelectorAll("[data-plus-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = parseInt(btn.getAttribute("data-plus-id"), 10);
+          const item = cart.find(i => i.id === id);
+          if (item) item.qty += 1;
+          renderCart();
+          updateCartIndicator();
+        });
+      });
+      container.querySelectorAll("[data-minus-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = parseInt(btn.getAttribute("data-minus-id"), 10);
+          const item = cart.find(i => i.id === id);
+          if (item && item.qty > 1) item.qty -= 1;
+          else cart = cart.filter(i => i.id !== id);
+          renderCart();
+          updateCartIndicator();
+        });
+      });
+      container.querySelectorAll("[data-remove-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = parseInt(btn.getAttribute("data-remove-id"), 10);
+          cart = cart.filter(i => i.id !== id);
+          renderCart();
+          updateCartIndicator();
+        });
+      });
+    }
+
+    function renderAdminProducts() {
+      const tbody = document.querySelector("#admin-products-table tbody");
+      tbody.innerHTML = "";
+      products.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.name}</td>
+          <td>${p.category}</td>
+          <td>${p.thc}</td>
+          <td>${formatMoney(p.price)}</td>
+          <td><button class="btn btn-outline" data-delete-id="${p.id}">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // wire delete buttons to API
+      tbody.querySelectorAll('[data-delete-id]').forEach(btn => {
+        btn.addEventListener('click', async ()=>{
+          const id = btn.getAttribute('data-delete-id');
+          if(!confirm('Delete this product?')) return;
+          try{
+            const headers = await getAuthHeaders();
+            const res = await fetch('/api/products/' + encodeURIComponent(id), { 
+              method: 'DELETE',
+              headers
+            });
+            if(res.status === 204){
+              // reload
+              await loadProductsFromApi();
+              document.getElementById('admin-ad-status').textContent = 'Product deleted.';
+            }else{
+              const err = await res.json();
+              alert('Delete failed: ' + (err && err.error ? err.error : res.status));
+            }
+          }catch(e){
+            alert('Delete failed: ' + e.message);
+          }
+        });
+      });
+    }
+
+    function switchSection(id) {
+      document.querySelectorAll("main .section").forEach(sec => {
+        sec.classList.toggle("active", sec.id === id);
+      });
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-section") === id);
+      });
+      if (id === "shop-section") renderProducts();
+      if (id === "cart-section") renderCart();
+    }
+
+    // --- Event wiring ------------------------------------------------------
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-section");
+        switchSection(id);
+      });
+    });
+
+    document.getElementById("category-list").addEventListener("click", e => {
+      const item = e.target.closest(".category-item");
+      if (!item) return;
+      currentCategory = item.getAttribute("data-category");
+      document.querySelectorAll(".category-item").forEach(c => {
+        c.classList.toggle("active", c === item);
+      });
+      renderProducts();
+    });
+
+    document.getElementById("search-input").addEventListener("input", () => {
+      renderProducts();
+    });
+
+    document.getElementById("clear-cart-btn").addEventListener("click", () => {
+      if (!cart.length) return;
+      if (confirm("Clear cart?")) {
+        cart = [];
+        renderCart();
+        updateCartIndicator();
+      }
+    });
+
+    document.getElementById("place-order-btn").addEventListener("click", async () => {
+      const name = document.getElementById("checkout-name").value.trim();
+      const phone = document.getElementById("checkout-phone").value.trim();
+      const addr = document.getElementById("checkout-address").value.trim();
+      const windowVal = document.getElementById("checkout-window").value;
+      const notes = document.getElementById("checkout-notes").value.trim();
+      const ageOk = document.getElementById("checkout-age-confirm").checked;
+      const statusEl = document.getElementById("order-status");
+
+      if (!cart.length) {
+        alert("Cart is empty.");
+        return;
+      }
+      if (!name || !phone || !addr) {
+        alert("Fill out name, phone, and address.");
+        return;
+      }
+      if (!ageOk) {
+        alert("You must confirm age 21+.");
+        return;
+      }
+
+      try {
+        const headers = await getAuthHeaders();
+        const orderItems = cart.map(item => ({
+          product_id: item.id,
+          quantity: item.qty
+        }));
+
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            customer_name: name,
+            customer_phone: phone,
+            delivery_address: addr,
+            delivery_window: windowVal,
+            order_notes: notes,
+            items: orderItems,
+            age_confirmed: true
+          })
+        });
+
+        if (res.ok) {
+          const order = await res.json();
+          showToast(`Order #${order.id} placed successfully!`, 'View orders', () => {
+            // Could navigate to orders view
+          });
+          statusEl.textContent = `Order #${order.id} placed successfully! Total: ${formatMoney(order.total)}`;
+          cart = [];
+          renderCart();
+          updateCartIndicator();
+          
+          // Clear form
+          document.getElementById("checkout-name").value = '';
+          document.getElementById("checkout-phone").value = '';
+          document.getElementById("checkout-address").value = '';
+          document.getElementById("checkout-notes").value = '';
+          document.getElementById("checkout-age-confirm").checked = false;
+        } else {
+          const error = await res.json();
+          alert('Order failed: ' + (error.error || 'Unknown error'));
+        }
+      } catch (e) {
+        console.error('Order error:', e);
+        alert('Failed to place order. Please try again.');
+      }
+    });
+
+    document.getElementById("submit-id-btn").addEventListener("click", () => {
+      const first = document.getElementById("id-first-name").value.trim();
+      const last = document.getElementById("id-last-name").value.trim();
+      const dob = document.getElementById("id-dob").value;
+      const file = document.getElementById("id-file").files[0];
+      const consent = document.getElementById("id-consent").checked;
+      const statusEl = document.getElementById("id-status");
+
+      if (!first || !last || !dob || !file) {
+        alert("Fill out all ID fields and choose a file.");
+        return;
+      }
+      if (!consent) {
+        alert("You must consent to ID storage.");
+        return;
+      }
+      statusEl.textContent = `ID submitted for ${first} ${last} (demo only, not uploaded anywhere).`;
+    });
+
+    document.getElementById("save-ad-btn").addEventListener("click", () => {
+      const text = document.getElementById("admin-ad-text").value.trim();
+      const adContent = document.getElementById("ad-content");
+      const status = document.getElementById("admin-ad-status");
+      if (!text) {
+        alert("Enter some ad copy.");
+        return;
+      }
+      adContent.textContent = text;
+      status.textContent = "Ad updated for customer view.";
+    });
+
+    // Image preview functionality
+    const imageFileInput = document.getElementById('admin-new-image-file');
+    const imageUrlInput = document.getElementById('admin-new-image-url');
+    const previewDiv = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const removePreviewBtn = document.getElementById('remove-preview');
+
+    imageFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // Clear URL input when file is selected
+        imageUrlInput.value = '';
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewDiv.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    imageUrlInput.addEventListener('input', (e) => {
+      if (e.target.value.trim()) {
+        // Clear file input when URL is entered
+        imageFileInput.value = '';
+        previewDiv.style.display = 'none';
+      }
+    });
+
+    removePreviewBtn.addEventListener('click', () => {
+      imageFileInput.value = '';
+      previewDiv.style.display = 'none';
+      previewImg.src = '';
+    });
+
+    // Admin: Add product
+    document.getElementById('add-product-btn').addEventListener('click', async () => {
+      const name = document.getElementById('admin-new-name').value.trim();
+      const category = document.getElementById('admin-new-category').value;
+      const price = Number(document.getElementById('admin-new-price').value || 0);
+      const thc = Number(document.getElementById('admin-new-thc').value || 0);
+      const imageFile = document.getElementById('admin-new-image-file').files[0];
+      const imageUrl = document.getElementById('admin-new-image-url').value.trim();
+      const status = document.getElementById('admin-ad-status');
+      
+      if(!name){ 
+        alert('Enter product name'); 
+        return; 
+      }
+      
+      if (!currentUser) {
+        alert('Please log in first. Use admin@zipmetro.com / admin123');
+        switchSection('account-section');
+        return;
+      }
+      
+      if (currentUser.role !== 'admin') {
+        alert('Admin access required. Please log in as admin.');
+        return;
+      }
+      
+      try{
+        let imagePath = imageUrl; // Default to URL if provided
+        
+        // Upload file if selected
+        if (imageFile) {
+          status.textContent = 'Uploading image...';
+          const formData = new FormData();
+          formData.append('image', imageFile);
+          
+          const token = localStorage.getItem('authToken');
+          const uploadRes = await fetch('/api/upload/image', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+          
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            imagePath = uploadData.url; // Use uploaded file URL
+          } else {
+            const uploadError = await uploadRes.json().catch(() => ({ error: 'Upload failed' }));
+            throw new Error('Image upload failed: ' + (uploadError.error || 'Unknown error'));
+          }
+        }
+        
+        // Create product with image path
+        const headers = await getAuthHeaders();
+        const res = await fetch('/api/products', { 
+          method: 'POST', 
+          headers,
+          body: JSON.stringify({ name, category, price, thc, image: imagePath }) 
+        });
+        
+        if(res.status === 201){
+          const created = await res.json();
+          status.textContent = 'Product added: ' + created.name;
+          status.style.color = 'var(--text-primary)';
+          showToast('Product added successfully!', 'OK');
+          // clear inputs
+          document.getElementById('admin-new-name').value='';
+          document.getElementById('admin-new-price').value='';
+          document.getElementById('admin-new-thc').value='';
+          document.getElementById('admin-new-image-file').value='';
+          document.getElementById('admin-new-image-url').value='';
+          previewDiv.style.display = 'none';
+          previewImg.src = '';
+          await loadProductsFromApi();
+        } else if (res.status === 401) {
+          alert('Please log in as admin first. Use: admin@zipmetro.com / admin123');
+          switchSection('account-section');
+        } else if (res.status === 403) {
+          alert('Admin access required. Please log in as admin.');
+        } else {
+          const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+          status.textContent = 'Add failed: ' + (err.error || `Status ${res.status}`);
+          status.style.color = 'var(--accent)';
+          alert('Add failed: ' + (err.error || `Status ${res.status}`));
+        }
+      } catch(e) { 
+        console.error('Add product error:', e);
+        status.textContent = 'Add failed: ' + e.message;
+        status.style.color = 'var(--accent)';
+        alert('Add failed: ' + e.message + '. Make sure you are logged in as admin.');
+      }
+    });
+
+    document.getElementById("notif-chips").addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      const channel = chip.getAttribute("data-channel");
+      const newVal = !chip.classList.contains("active");
+      notifPrefs[channel] = newVal;
+      chip.classList.toggle("active", newVal);
+    });
+
+    document.getElementById("save-notif-btn").addEventListener("click", () => {
+      const status = document.getElementById("notif-status");
+      const enabled = Object.entries(notifPrefs)
+        .filter(([, v]) => v)
+        .map(([k]) => k.toUpperCase())
+        .join(", ") || "NONE";
+      status.textContent = "Saved. Channels enabled: " + enabled + ".";
+    });
+
+    // --- Auth Event Listeners ----------------------------------------------
+    document.getElementById('login-btn').addEventListener('click', async () => {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      if (!email || !password) {
+        document.getElementById('login-status').textContent = 'Please enter email and password';
+        document.getElementById('login-status').style.color = 'var(--accent)';
+        return;
+      }
+      await login(email, password);
+    });
+
+    document.getElementById('register-btn').addEventListener('click', async () => {
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value.trim();
+      const firstName = document.getElementById('register-first-name').value.trim();
+      const lastName = document.getElementById('register-last-name').value.trim();
+      if (!email || !password) {
+        document.getElementById('register-status').textContent = 'Please enter email and password';
+        document.getElementById('register-status').style.color = 'var(--accent)';
+        return;
+      }
+      await register(email, password, firstName, lastName);
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      logout();
+    });
+
+    document.getElementById('login-toggle-btn').addEventListener('click', () => {
+      switchSection('account-section');
+    });
+
+    // --- Initial render ----------------------------------------------------
+    // Load products from API (falls back to client-side if API unavailable)
+    loadProductsFromApi();
+    renderAdminProducts();
+    // accessibility: focus main when skip-link used
+    document.querySelector('.skip-link').addEventListener('click', (e)=>{
+      const m = document.getElementById('main-content');
+      if(m){ m.setAttribute('tabindex','-1'); m.focus(); }
+    });
+  </script>
+</body>
+</html>

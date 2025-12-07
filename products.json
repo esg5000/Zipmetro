@@ -1,0 +1,29 @@
+[
+  { "id": 1, "name": "Sunset Sherbet", "category": "Flower", "desc": "Hybrid · Smooth, creamy, evening friendly.", "price": 45, "thc": 25, "image": "https://picsum.photos/seed/sunset-sherbet/800/440" },
+  { "id": 2, "name": "ZipMetro House OG", "category": "Flower", "desc": "Indica-leaning classic with heavy body feel.", "price": 40, "thc": 27, "image": "https://picsum.photos/seed/house-og/800/440" },
+  { "id": 9, "name": "Lemon Gaze", "category": "Flower", "desc": "Citrus sativa-leaning · bright and clear.", "price": 38, "thc": 22, "image": "https://picsum.photos/seed/lemon-gaze/800/440" },
+  { "id": 10, "name": "Royal Kush", "category": "Flower", "desc": "Relaxing indica · couch-lock friendly.", "price": 50, "thc": 29, "image": "https://picsum.photos/seed/royal-kush/800/440" },
+  { "id": 11, "name": "Blue Velvet", "category": "Flower", "desc": "Balanced Hybrid · smooth flavor.", "price": 42, "thc": 24, "image": "https://picsum.photos/seed/blue-velvet/800/440" },
+  { "id": 12, "name": "Cali Dream", "category": "Flower", "desc": "Tropical terp profile · daytime use.", "price": 44, "thc": 26, "image": "https://picsum.photos/seed/cali-dream/800/440" },
+
+  { "id": 3, "name": "Electric Haze Vape 1g", "category": "Vape", "desc": "Sativa cart · citrus & pine, day-time vibes.", "price": 35, "thc": 90, "image": "https://picsum.photos/seed/electric-haze/800/440" },
+  { "id": 4, "name": "Night Drive Live Resin Cart", "category": "Vape", "desc": "Full-spectrum live resin · terp heavy.", "price": 48, "thc": 88, "image": "https://picsum.photos/seed/night-drive/800/440" },
+  { "id": 13, "name": "Citrus Rush Cart", "category": "Vape", "desc": "Energetic sativa-forward cartridge.", "price": 36, "thc": 92, "image": "https://picsum.photos/seed/citrus-rush/800/440" },
+  { "id": 14, "name": "Moonlight OG Cart", "category": "Vape", "desc": "Smooth indica cart for evenings.", "price": 40, "thc": 85, "image": "https://picsum.photos/seed/moonlight-og/800/440" },
+  { "id": 15, "name": "Sparkle Hybrid 0.5g", "category": "Vape", "desc": "Compact pen · hybrid effects.", "price": 28, "thc": 75, "image": "https://picsum.photos/seed/sparkle-hybrid/800/440" },
+  { "id": 16, "name": "High Noon 1g", "category": "Vape", "desc": "Daytime clarity · citrus notes.", "price": 34, "thc": 88, "image": "https://picsum.photos/seed/high-noon/800/440" },
+
+  { "id": 5, "name": "Guava Punch Live Rosin", "category": "Extracts", "desc": "Cold-cured rosin · fruit forward and loud.", "price": 65, "thc": 76, "image": "https://picsum.photos/seed/guava-punch/800/440" },
+  { "id": 6, "name": "Diamond Sauce – Metro Fuel", "category": "Extracts", "desc": "High potency diamonds in terp sauce.", "price": 70, "thc": 82, "image": "https://picsum.photos/seed/diamond-sauce/800/440" },
+  { "id": 17, "name": "Crystal Shatter", "category": "Extracts", "desc": "High-clarity shatter for potency seekers.", "price": 68, "thc": 85, "image": "https://picsum.photos/seed/crystal-shatter/800/440" },
+  { "id": 18, "name": "Rosin Live Stack", "category": "Extracts", "desc": "Solventless rosin · full flavor.", "price": 72, "thc": 80, "image": "https://picsum.photos/seed/rosin-live/800/440" },
+  { "id": 19, "name": "Terp Sauce Reserve", "category": "Extracts", "desc": "Flavor-forward sauce with rich terps.", "price": 75, "thc": 78, "image": "https://picsum.photos/seed/terp-sauce/800/440" },
+  { "id": 20, "name": "Ultra Diamonds", "category": "Extracts", "desc": "Top-shelf diamonds for advanced users.", "price": 88, "thc": 92, "image": "https://picsum.photos/seed/ultra-diamonds/800/440" },
+
+  { "id": 7, "name": "Metro Mango Gummies 100mg", "category": "Edibles", "desc": "10 x 10mg pieces · mellow mango flavor.", "price": 18, "thc": 100, "image": "https://picsum.photos/seed/mango-gummies/800/440" },
+  { "id": 8, "name": "NightCap Chocolates 200mg", "category": "Edibles", "desc": "8 x 25mg · rich dark chocolate squares.", "price": 24, "thc": 200, "image": "https://picsum.photos/seed/nightcap-choco/800/440" },
+  { "id": 21, "name": "Citrus Chews 50mg", "category": "Edibles", "desc": "6 x 8.33mg chews · bright citrus.", "price": 14, "thc": 50, "image": "https://picsum.photos/seed/citrus-chews/800/440" },
+  { "id": 22, "name": "Maple Bars 120mg", "category": "Edibles", "desc": "6 x 20mg bars · maple richness.", "price": 22, "thc": 120, "image": "https://picsum.photos/seed/maple-bars/800/440" },
+  { "id": 23, "name": "Berry Blast Gummies 150mg", "category": "Edibles", "desc": "15 x 10mg · tangy berry mix.", "price": 26, "thc": 150, "image": "https://picsum.photos/seed/berry-blast/800/440" },
+  { "id": 24, "name": "Espresso Bites 80mg", "category": "Edibles", "desc": "8 x 10mg · coffee-forward treats.", "price": 19, "thc": 80, "image": "https://picsum.photos/seed/espresso-bites/800/440" }
+]
