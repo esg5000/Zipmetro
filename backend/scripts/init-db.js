@@ -5,7 +5,9 @@ async function initDatabase() {
   console.log('Initializing database...');
   
   // Wait for database connection and table initialization
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  // MongoDB needs more time to connect
+  const waitTime = process.env.DATABASE_URL || process.env.MONGODB_URI ? 3000 : 2000;
+  await new Promise(resolve => setTimeout(resolve, waitTime));
 
   // Create default admin user with proper password hash
   const adminPassword = 'admin123';

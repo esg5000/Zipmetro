@@ -62,21 +62,30 @@ router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    console.log('Login attempt:', { email, hasPassword: !!password });
+
     if (!email || !password) {
+      console.log('Login failed: Missing email or password');
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
     // Find user
     const user = await db.getAsync('SELECT * FROM users WHERE email = ?', [email]);
     if (!user) {
+      console.log('Login failed: User not found for email:', email);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    console.log('User found:', { id: user.id, email: user.email, role: user.role, hasPasswordHash: !!user.password_hash });
 
     // Check password
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
+      console.log('Login failed: Password mismatch for email:', email);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    console.log('Login successful for:', email);
 
     // Generate token
     const token = jwt.sign(
@@ -96,6 +105,7 @@ router.post('/login', async (req, res, next) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     next(error);
   }
 });
