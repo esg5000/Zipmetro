@@ -12,32 +12,82 @@ if (USE_MONGODB) {
   const { MongoClient } = require('mongodb');
   let mongoClient;
   let mongoDb;
-  let collections = {};
+  let isConnecting = false;
+  let connectionPromise = null;
 
-  // Initialize MongoDB connection
+  // Helper function to ensure MongoDB connection
+  async function ensureConnection() {
+    // If already connected, return
+    if (mongoDb && mongoClient && mongoClient.topology && mongoClient.topology.isConnected()) {
+      return;
+    }
+
+    // If already connecting, wait for that promise
+    if (isConnecting && connectionPromise) {
+      await connectionPromise;
+      return;
+    }
+
+    // Start new connection
+    isConnecting = true;
+    connectionPromise = (async () => {
+      try {
+        console.log('🔌 Connecting to MongoDB...');
+        
+        // Close existing client if any
+        if (mongoClient) {
+          try {
+            await mongoClient.close();
+          } catch (e) {
+            // Ignore close errors
+          }
+        }
+
+        mongoClient = new MongoClient(MONGO_URL, {
+          serverSelectionTimeoutMS: 5000,
+          connectTimeoutMS: 5000,
+        });
+        
+        await mongoClient.connect();
+        mongoDb = mongoClient.db();
+        console.log('✅ Connected to MongoDB');
+        
+        // Initialize collections and indexes
+        await initializeMongoDB();
+        isConnecting = false;
+      } catch (err) {
+        isConnecting = false;
+        console.error('❌ MongoDB connection error:', err.message);
+        console.error('   Server will continue but database operations may fail');
+        console.error('   Please check your DATABASE_URL and MongoDB connection');
+        throw err;
+      }
+    })();
+
+    await connectionPromise;
+  }
+
+  // Initialize MongoDB connection (non-blocking)
   (async () => {
     try {
-      console.log('🔌 Connecting to MongoDB...');
-      mongoClient = new MongoClient(MONGO_URL);
-      await mongoClient.connect();
-      mongoDb = mongoClient.db();
-      console.log('✅ Connected to MongoDB');
-      
-      // Initialize collections and indexes
-      await initializeMongoDB();
+      await ensureConnection();
     } catch (err) {
-      console.error('❌ MongoDB connection error:', err);
-      process.exit(1);
+      // Connection failed, but don't crash - will retry on first use
+      console.log('⚠️  MongoDB initial connection failed, will retry on first database operation');
     }
   })();
 
   async function initializeMongoDB() {
-    // Create indexes
-    await mongoDb.collection('users').createIndex({ email: 1 }, { unique: true });
-    await mongoDb.collection('products').createIndex({ category: 1 });
-    await mongoDb.collection('orders').createIndex({ user_id: 1 });
-    await mongoDb.collection('order_items').createIndex({ order_id: 1 });
-    console.log('✅ MongoDB collections initialized');
+    try {
+      // Create indexes (ignore errors if they already exist)
+      await mongoDb.collection('users').createIndex({ email: 1 }, { unique: true }).catch(() => {});
+      await mongoDb.collection('products').createIndex({ category: 1 }).catch(() => {});
+      await mongoDb.collection('orders').createIndex({ user_id: 1 }).catch(() => {});
+      await mongoDb.collection('order_items').createIndex({ order_id: 1 }).catch(() => {});
+      console.log('✅ MongoDB collections initialized');
+    } catch (err) {
+      console.error('⚠️  Error initializing MongoDB indexes:', err.message);
+    }
   }
 
   // Helper to get collection name from SQL table name
@@ -123,10 +173,8 @@ if (USE_MONGODB) {
   // Convert SQL SELECT to MongoDB find
   db = {
     async getAsync(sql, params = []) {
-      if (!mongoDb) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        if (!mongoDb) throw new Error('MongoDB not connected');
-      }
+      // Ensure connection before use
+      await ensureConnection();
 
       // Handle COUNT queries
       if (sql.toUpperCase().includes('SELECT COUNT(*)')) {
@@ -154,10 +202,8 @@ if (USE_MONGODB) {
     },
 
     async allAsync(sql, params = []) {
-      if (!mongoDb) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        if (!mongoDb) throw new Error('MongoDB not connected');
-      }
+      // Ensure connection before use
+      await ensureConnection();
 
       const collectionName = getCollectionName(sql);
       if (!collectionName) throw new Error('Could not determine collection from SQL');
@@ -188,10 +234,8 @@ if (USE_MONGODB) {
     },
 
     async runAsync(sql, params = []) {
-      if (!mongoDb) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        if (!mongoDb) throw new Error('MongoDB not connected');
-      }
+      // Ensure connection before use
+      await ensureConnection();
 
       const collectionName = getCollectionName(sql);
       if (!collectionName) throw new Error('Could not determine collection from SQL');
