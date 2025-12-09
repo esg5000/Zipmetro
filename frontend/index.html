@@ -404,6 +404,8 @@
       margin-bottom: var(--space-sm);
     }
     .search-input {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      text-transform: none;
       width: 100%;
       padding: var(--space-md) var(--space-lg);
       border-radius: 12px;
@@ -1174,8 +1176,9 @@
     }
     /* Standardized Input Styles */
     input, select, textarea {
-      font-family: inherit;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       font-size: 15px;
+      text-transform: none;
       padding: var(--space-md) var(--space-lg);
       border-radius: 12px;
       border: 1px solid var(--border-medium);
@@ -1568,11 +1571,11 @@
                 <div class="stack">
                   <div>
                     <label>Email</label>
-                    <input id="login-email" type="email" placeholder="admin@zipmetro.com" />
+                    <input id="login-email" type="email" placeholder="admin@zipmetro.com" autocapitalize="off" autocomplete="email" />
                   </div>
                   <div>
                     <label>Password</label>
-                    <input id="login-password" type="password" placeholder="Password" />
+                    <input id="login-password" type="password" placeholder="Password" autocapitalize="off" autocomplete="current-password" />
                   </div>
                   <button class="btn btn-primary" id="login-btn">Login</button>
                   <div id="login-status" class="text-muted"></div>
@@ -1583,11 +1586,11 @@
                 <div class="stack">
                   <div>
                     <label>Email</label>
-                    <input id="register-email" type="email" placeholder="your@email.com" />
+                    <input id="register-email" type="email" placeholder="your@email.com" autocapitalize="off" autocomplete="email" />
                   </div>
                   <div>
                     <label>Password</label>
-                    <input id="register-password" type="password" placeholder="Password" />
+                    <input id="register-password" type="password" placeholder="Password" autocapitalize="off" autocomplete="new-password" />
                   </div>
                   <div class="row">
                     <div style="flex:1;">
