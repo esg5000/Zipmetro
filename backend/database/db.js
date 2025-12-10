@@ -16,10 +16,22 @@ if (USE_MONGODB) {
   let isConnecting = false;
   let connectionPromise = null;
 
+  // Track if admin has been ensured (to avoid running multiple times)
+  let adminEnsured = false;
+
   // Helper function to ensure MongoDB connection
   async function ensureConnection() {
     // If already connected, return
     if (mongoDb && mongoClient && mongoClient.topology && mongoClient.topology.isConnected()) {
+      // If admin hasn't been ensured yet, do it now
+      if (!adminEnsured) {
+        try {
+          await ensureAdmin(mongoDb);
+          adminEnsured = true;
+        } catch (err) {
+          console.error('⚠️  Error ensuring admin on existing connection:', err.message);
+        }
+      }
       return;
     }
 
@@ -56,8 +68,11 @@ if (USE_MONGODB) {
         // Initialize collections and indexes
         await initializeMongoDB();
         
-        // Ensure admin user exists
-        await ensureAdmin(mongoDb);
+        // Ensure admin user exists (only once)
+        if (!adminEnsured) {
+          await ensureAdmin(mongoDb);
+          adminEnsured = true;
+        }
         
         isConnecting = false;
       } catch (err) {
@@ -100,6 +115,8 @@ if (USE_MONGODB) {
     try {
       const usersCollection = db.collection('users');
       
+      console.log('🔍 Checking for admin user...');
+      
       // Check if admin user exists
       const existingAdmin = await usersCollection.findOne({ email: 'admin@zipmetro.com' });
       
@@ -108,7 +125,7 @@ if (USE_MONGODB) {
         console.log('📝 Creating admin user in MongoDB...');
         const passwordHash = await bcrypt.hash('admin123', 10);
         
-        await usersCollection.insertOne({
+        const insertResult = await usersCollection.insertOne({
           email: 'admin@zipmetro.com',
           password_hash: passwordHash,
           role: 'admin',
@@ -123,9 +140,26 @@ if (USE_MONGODB) {
         console.log('✅ Admin user created:');
         console.log('   Email: admin@zipmetro.com');
         console.log('   Password: admin123');
+        console.log('   MongoDB _id:', insertResult.insertedId);
         console.log('   ⚠️  CHANGE THIS PASSWORD IN PRODUCTION!');
+        
+        // Verify it was created and can be found
+        const verifyAdmin = await usersCollection.findOne({ email: 'admin@zipmetro.com' });
+        if (verifyAdmin) {
+          console.log('✅ Admin user verified in database');
+          const testValid = await bcrypt.compare('admin123', verifyAdmin.password_hash);
+          console.log('✅ Password hash test:', testValid ? 'PASSED' : 'FAILED');
+        } else {
+          console.error('❌ ERROR: Admin user was created but cannot be found!');
+        }
       } else {
         // Admin exists, verify password is correct
+        console.log('✅ Admin user already exists');
+        console.log('   MongoDB _id:', existingAdmin._id);
+        console.log('   Email:', existingAdmin.email);
+        console.log('   Role:', existingAdmin.role);
+        console.log('   Has password_hash:', !!existingAdmin.password_hash);
+        
         const testValid = await bcrypt.compare('admin123', existingAdmin.password_hash);
         if (!testValid) {
           // Password hash might be wrong, update it
@@ -136,12 +170,18 @@ if (USE_MONGODB) {
             { $set: { password_hash: passwordHash, role: 'admin', updated_at: new Date() } }
           );
           console.log('✅ Admin password updated');
+          
+          // Verify the update
+          const updatedAdmin = await usersCollection.findOne({ email: 'admin@zipmetro.com' });
+          const retest = await bcrypt.compare('admin123', updatedAdmin.password_hash);
+          console.log('✅ Password hash re-test:', retest ? 'PASSED' : 'FAILED');
         } else {
-          console.log('✅ Admin user already exists');
+          console.log('✅ Admin password hash is valid');
         }
       }
     } catch (err) {
-      console.error('⚠️  Error ensuring admin user:', err.message);
+      console.error('❌ Error ensuring admin user:', err.message);
+      console.error('   Stack:', err.stack);
       // Don't throw - allow server to continue
     }
   }
