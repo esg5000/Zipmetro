@@ -656,23 +656,30 @@
     
     @media (max-width: 480px) {
       .hero-section {
-        padding: 36px 20px;
-        min-height: 260px;
-        max-height: 320px;
+        padding: 24px var(--space-md);
+        min-height: 220px;
+        max-height: 280px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+      }
+      
+      .hero-logo {
+        max-width: 100px !important;
+        margin-bottom: var(--space-sm);
       }
       
       .hero-headline {
-        font-size: 24px;
+        font-size: clamp(18px, 4vw, 24px) !important;
+        line-height: 1.2 !important;
+        margin-bottom: var(--space-sm);
       }
       
       .hero-subheadline {
-        font-size: 14px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .hero-section {
-        padding: 60px var(--space-md);
+        font-size: clamp(10px, 2.5vw, 12px) !important;
+        line-height: 1.4 !important;
       }
     }
 
@@ -820,10 +827,23 @@
         padding-right: max(var(--space-md), env(safe-area-inset-right, 0px));
       }
       
+      /* Reorder: Hero section first, then categories on mobile */
       aside {
+        order: 2; /* Categories come after hero */
         position: static;
         border: 1px solid var(--border-light);
         border-radius: var(--radius-lg);
+        margin-top: 0;
+      }
+      
+      main {
+        order: 1; /* Main content (with hero) comes first */
+      }
+      
+      /* Ensure hero section is properly sized on mobile */
+      .hero-section {
+        width: 100%;
+        margin-bottom: var(--space-lg);
       }
       
       .hero-carousel .carousel-slide{ 
