@@ -10,6 +10,7 @@ let db;
 if (USE_MONGODB) {
   // MongoDB implementation
   const { MongoClient } = require('mongodb');
+  const bcrypt = require('bcrypt');
   let mongoClient;
   let mongoDb;
   let isConnecting = false;
@@ -54,6 +55,10 @@ if (USE_MONGODB) {
         
         // Initialize collections and indexes
         await initializeMongoDB();
+        
+        // Ensure admin user exists
+        await ensureAdmin(mongoDb);
+        
         isConnecting = false;
       } catch (err) {
         isConnecting = false;
@@ -87,6 +92,57 @@ if (USE_MONGODB) {
       console.log('✅ MongoDB collections initialized');
     } catch (err) {
       console.error('⚠️  Error initializing MongoDB indexes:', err.message);
+    }
+  }
+
+  // Ensure admin user exists in MongoDB
+  async function ensureAdmin(db) {
+    try {
+      const usersCollection = db.collection('users');
+      
+      // Check if admin user exists
+      const existingAdmin = await usersCollection.findOne({ email: 'admin@zipmetro.com' });
+      
+      if (!existingAdmin) {
+        // Admin doesn't exist, create it
+        console.log('📝 Creating admin user in MongoDB...');
+        const passwordHash = await bcrypt.hash('admin123', 10);
+        
+        await usersCollection.insertOne({
+          email: 'admin@zipmetro.com',
+          password_hash: passwordHash,
+          role: 'admin',
+          first_name: '',
+          last_name: '',
+          phone: '',
+          id_verified: false,
+          created_at: new Date(),
+          updated_at: new Date()
+        });
+        
+        console.log('✅ Admin user created:');
+        console.log('   Email: admin@zipmetro.com');
+        console.log('   Password: admin123');
+        console.log('   ⚠️  CHANGE THIS PASSWORD IN PRODUCTION!');
+      } else {
+        // Admin exists, verify password is correct
+        const testValid = await bcrypt.compare('admin123', existingAdmin.password_hash);
+        if (!testValid) {
+          // Password hash might be wrong, update it
+          console.log('⚠️  Admin password hash mismatch, updating...');
+          const passwordHash = await bcrypt.hash('admin123', 10);
+          await usersCollection.updateOne(
+            { email: 'admin@zipmetro.com' },
+            { $set: { password_hash: passwordHash, role: 'admin', updated_at: new Date() } }
+          );
+          console.log('✅ Admin password updated');
+        } else {
+          console.log('✅ Admin user already exists');
+        }
+      }
+    } catch (err) {
+      console.error('⚠️  Error ensuring admin user:', err.message);
+      // Don't throw - allow server to continue
     }
   }
 
