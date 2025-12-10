@@ -46,6 +46,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Ensure index.html is always served fresh (no cache) - must be before API routes
+app.get('/', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 // API Routes - must come before static file serving
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
@@ -54,9 +62,25 @@ app.use('/api/admin', adminRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/upload', uploadRouter);
 
-// Serve static files (frontend and assets)
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.use('/assets', express.static(path.join(__dirname, '../assets')));
+// Serve static files (frontend and assets) with proper cache headers
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  maxAge: '1d', // Cache for 1 day
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    // Don't cache HTML files - always serve fresh
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
+app.use('/assets', express.static(path.join(__dirname, '../assets'), {
+  maxAge: '7d', // Cache assets longer
+  etag: true,
+  lastModified: true
+}));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Serve index.html for all non-API routes (SPA fallback)
@@ -65,6 +89,10 @@ app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/') || req.path === '/health') {
     return next();
   }
+  // Always serve fresh HTML - no cache
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   // Serve index.html for SPA routing
   res.sendFile(path.join(__dirname, '../frontend/index.html'), (err) => {
     if (err) {
