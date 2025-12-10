@@ -57,20 +57,32 @@ if (USE_MONGODB) {
         }
 
         // MongoDB connection options optimized for Render.com
+        // MongoDB Atlas (mongodb+srv://) handles TLS automatically - don't override!
+        const isAtlasConnection = MONGO_URL.startsWith('mongodb+srv://');
+        const urlHasTls = MONGO_URL.includes('tls=true') || MONGO_URL.includes('ssl=true');
+        
         const mongoOptions = {
           serverSelectionTimeoutMS: 30000, // 30 seconds for Render.com network latency
           connectTimeoutMS: 30000,
           socketTimeoutMS: 45000,
-          // TLS/SSL options for MongoDB Atlas (common on Render)
-          tls: true,
-          tlsAllowInvalidCertificates: false,
-          tlsAllowInvalidHostnames: false,
           retryWrites: true,
           retryReads: true,
           // Connection pool settings
           maxPoolSize: 10,
           minPoolSize: 1,
         };
+        
+        // Only add TLS options for non-Atlas connections that don't already have TLS
+        // MongoDB Atlas automatically handles TLS - adding our own causes conflicts!
+        if (!isAtlasConnection && !urlHasTls) {
+          // For non-Atlas connections without TLS in URL, add TLS if needed
+          mongoOptions.tls = true;
+          mongoOptions.tlsAllowInvalidCertificates = false;
+          mongoOptions.tlsAllowInvalidHostnames = false;
+        }
+        // For Atlas connections or connections with TLS in URL, let MongoDB handle TLS
+        
+        console.log(`🔗 MongoDB connection type: ${isAtlasConnection ? 'Atlas (mongodb+srv://)' : 'Standard (mongodb://)'}`);
         
         mongoClient = new MongoClient(MONGO_URL, mongoOptions);
         
@@ -93,8 +105,12 @@ if (USE_MONGODB) {
         console.error('❌ MongoDB connection error:', err.message);
         
         // More detailed error logging for debugging on Render.com
-        if (err.message.includes('SSL') || err.message.includes('TLS')) {
-          console.error('   SSL/TLS error detected - check MongoDB connection string');
+        if (err.message.includes('SSL') || err.message.includes('TLS') || err.message.includes('tlsv1')) {
+          console.error('   SSL/TLS error detected - this is often caused by:');
+          console.error('   1. MongoDB connection string format issues');
+          console.error('   2. TLS settings conflict (connection string vs code settings)');
+          console.error('   3. Network/firewall blocking TLS handshake');
+          console.error('   Try: Check your DATABASE_URL format and ensure it matches your MongoDB provider');
         } else if (err.message.includes('timeout')) {
           console.error('   Connection timeout - check network connectivity and MongoDB URL');
         } else if (err.message.includes('authentication')) {
