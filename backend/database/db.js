@@ -56,10 +56,23 @@ if (USE_MONGODB) {
           }
         }
 
-        mongoClient = new MongoClient(MONGO_URL, {
-          serverSelectionTimeoutMS: 5000,
-          connectTimeoutMS: 5000,
-        });
+        // MongoDB connection options optimized for Render.com
+        const mongoOptions = {
+          serverSelectionTimeoutMS: 30000, // 30 seconds for Render.com network latency
+          connectTimeoutMS: 30000,
+          socketTimeoutMS: 45000,
+          // TLS/SSL options for MongoDB Atlas (common on Render)
+          tls: true,
+          tlsAllowInvalidCertificates: false,
+          tlsAllowInvalidHostnames: false,
+          retryWrites: true,
+          retryReads: true,
+          // Connection pool settings
+          maxPoolSize: 10,
+          minPoolSize: 1,
+        };
+        
+        mongoClient = new MongoClient(MONGO_URL, mongoOptions);
         
         await mongoClient.connect();
         mongoDb = mongoClient.db();
@@ -78,6 +91,16 @@ if (USE_MONGODB) {
       } catch (err) {
         isConnecting = false;
         console.error('❌ MongoDB connection error:', err.message);
+        
+        // More detailed error logging for debugging on Render.com
+        if (err.message.includes('SSL') || err.message.includes('TLS')) {
+          console.error('   SSL/TLS error detected - check MongoDB connection string');
+        } else if (err.message.includes('timeout')) {
+          console.error('   Connection timeout - check network connectivity and MongoDB URL');
+        } else if (err.message.includes('authentication')) {
+          console.error('   Authentication failed - check MongoDB username/password');
+        }
+        
         console.error('   Server will continue but database operations may fail');
         console.error('   Please check your DATABASE_URL and MongoDB connection');
         throw err;
@@ -87,13 +110,29 @@ if (USE_MONGODB) {
     await connectionPromise;
   }
 
-  // Initialize MongoDB connection (non-blocking)
+  // Initialize MongoDB connection (non-blocking, but with retry logic)
   (async () => {
-    try {
-      await ensureConnection();
-    } catch (err) {
-      // Connection failed, but don't crash - will retry on first use
-      console.log('⚠️  MongoDB initial connection failed, will retry on first database operation');
+    let retries = 0;
+    const maxRetries = 3;
+    
+    while (retries < maxRetries) {
+      try {
+        console.log(`🔄 Attempting MongoDB connection (attempt ${retries + 1}/${maxRetries})...`);
+        await ensureConnection();
+        console.log('✅ MongoDB connection established on startup');
+        break; // Success, exit retry loop
+      } catch (err) {
+        retries++;
+        if (retries < maxRetries) {
+          const waitTime = Math.min(1000 * Math.pow(2, retries), 10000); // Exponential backoff, max 10s
+          console.log(`⚠️  MongoDB connection attempt ${retries} failed, retrying in ${waitTime}ms...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          console.log('⚠️  MongoDB initial connection failed after all retries');
+          console.log('   Server will continue but database operations may fail');
+          console.log('   Connection will be retried on first database operation');
+        }
+      }
     }
   })();
 
@@ -157,8 +196,18 @@ if (USE_MONGODB) {
         console.log('✅ Admin user already exists');
         console.log('   MongoDB _id:', existingAdmin._id);
         console.log('   Email:', existingAdmin.email);
-        console.log('   Role:', existingAdmin.role);
+        console.log('   Role:', existingAdmin.role || 'customer');
         console.log('   Has password_hash:', !!existingAdmin.password_hash);
+        
+        // Ensure role is set to admin
+        if (existingAdmin.role !== 'admin') {
+          console.log('⚠️  Admin user role is not "admin", updating...');
+          await usersCollection.updateOne(
+            { email: 'admin@zipmetro.com' },
+            { $set: { role: 'admin', updated_at: new Date() } }
+          );
+          console.log('✅ Admin role updated');
+        }
         
         const testValid = await bcrypt.compare('admin123', existingAdmin.password_hash);
         if (!testValid) {
@@ -181,8 +230,10 @@ if (USE_MONGODB) {
       }
     } catch (err) {
       console.error('❌ Error ensuring admin user:', err.message);
-      console.error('   Stack:', err.stack);
-      // Don't throw - allow server to continue
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('   Stack:', err.stack);
+      }
+      // Don't throw - allow server to continue, but log the error
     }
   }
 
