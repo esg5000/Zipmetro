@@ -165,6 +165,14 @@
     .brand-link:has(img.brand-logo[src=""]) {
       display: none;
     }
+    
+    /* Hide header logo - keep only hero banner logo */
+    @media (max-width: 800px) {
+      .brand-logo,
+      .brand-link {
+        display: none !important;
+      }
+    }
     .brand-title {
       font-family: var(--font-graffiti);
       font-size: 24px;
@@ -953,6 +961,23 @@
         min-height: calc(60px + env(safe-area-inset-top, 0px));
       }
       
+      /* Smaller login button on very small screens */
+      #login-toggle-btn {
+        min-width: 70px !important;
+        padding: var(--space-sm) var(--space-md) !important;
+        font-size: 14px !important;
+      }
+      
+      /* Full-width login form on small screens */
+      #login-register-section {
+        padding: var(--space-lg) !important;
+      }
+      
+      /* Adjust nav position for smaller header */
+      nav {
+        top: calc(60px + env(safe-area-inset-top, 0px)) !important;
+      }
+      
       .layout {
         padding: var(--space-md);
         padding-left: max(var(--space-md), env(safe-area-inset-left));
@@ -1510,17 +1535,133 @@
       }
       
       .header-right {
-        gap: var(--space-sm);
+        gap: var(--space-sm) !important;
         margin-left: auto;
+        flex-wrap: nowrap;
+      }
+      
+      /* Fix login button for mobile */
+      #login-toggle-btn {
+        min-height: 48px !important;
+        min-width: 80px !important;
+        padding: var(--space-md) var(--space-lg) !important;
+        font-size: 15px !important;
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(184, 62, 191, 0.2);
+      }
+      
+      /* Fix logout button for mobile */
+      #logout-btn {
+        min-height: 44px !important;
+        padding: var(--space-sm) var(--space-md) !important;
+        font-size: 14px !important;
+      }
+      
+      /* Fix user status display on mobile */
+      #user-status {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: var(--space-xs);
+        font-size: 12px;
         flex-wrap: wrap;
       }
       
-      #user-status {
-        flex-wrap: wrap;
+      #user-email {
+        font-size: 12px;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       
       .cart-indicator {
         display: none;
+      }
+      
+      /* Improve navigation dropdown menu */
+      nav {
+        position: fixed !important;
+        top: calc(64px + env(safe-area-inset-top, 0px)) !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: var(--space-md) !important;
+        gap: var(--space-xs) !important;
+        z-index: 9999;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+      
+      .nav-btn {
+        width: 100% !important;
+        min-height: 52px !important;
+        padding: var(--space-md) var(--space-lg) !important;
+        font-size: 16px !important;
+        font-weight: 500;
+        border-radius: var(--radius-md);
+        justify-content: flex-start;
+        text-align: left;
+        gap: var(--space-md);
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(184, 62, 191, 0.2);
+      }
+      
+      /* Add backdrop overlay for mobile menu */
+      nav.open::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        animation: fadeIn 0.2s ease;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      /* Fix login form section on mobile */
+      #login-register-section .row {
+        flex-direction: column !important;
+        gap: var(--space-lg) !important;
+      }
+      
+      #login-register-section .row > div {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+      }
+      
+      /* Ensure login inputs are properly sized */
+      #login-register-section input {
+        min-height: 48px !important;
+        font-size: 16px !important;
+        padding: var(--space-md) var(--space-lg) !important;
+      }
+      
+      #login-register-section label {
+        font-size: 14px !important;
+        margin-bottom: var(--space-xs) !important;
+        display: block;
+      }
+      
+      #login-register-section .btn {
+        min-height: 52px !important;
+        font-size: 16px !important;
+        font-weight: 600;
+        width: 100%;
+        margin-top: var(--space-md);
+      }
+      
+      /* Better spacing in login form */
+      #login-register-section .stack {
+        gap: var(--space-md) !important;
       }
     }
   </style>
@@ -2065,7 +2206,10 @@
         return false;
       }
       try {
-        const res = await fetch('/api/auth/verify', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch('/api/auth/verify', { 
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
         if (res.ok) {
           const data = await res.json();
           currentUser = data.user;
@@ -2112,7 +2256,8 @@
         const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password }),
+          credentials: 'include'
         });
         
         if (res.ok) {
@@ -2164,7 +2309,8 @@
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName })
+          body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
+          credentials: 'include'
         });
         
         if (res.ok || res.status === 201) {
@@ -2436,7 +2582,8 @@
             const headers = await getAuthHeaders();
             const res = await fetch('/api/products/' + encodeURIComponent(id), { 
               method: 'DELETE',
-              headers
+              headers,
+              credentials: 'include'
             });
             if(res.status === 204){
               // reload
@@ -2535,7 +2682,8 @@
             order_notes: notes,
             items: orderItems,
             age_confirmed: true
-          })
+          }),
+          credentials: 'include'
         });
 
         if (res.ok) {
@@ -2673,7 +2821,8 @@
             headers: {
               'Authorization': `Bearer ${token}`
             },
-            body: formData
+            body: formData,
+            credentials: 'include'
           });
           
           if (uploadRes.ok) {
@@ -2690,7 +2839,8 @@
         const res = await fetch('/api/products', { 
           method: 'POST', 
           headers,
-          body: JSON.stringify({ name, category, price, thc, image: imagePath }) 
+          body: JSON.stringify({ name, category, price, thc, image: imagePath }),
+          credentials: 'include'
         });
         
         if(res.status === 201){

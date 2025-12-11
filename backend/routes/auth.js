@@ -35,9 +35,12 @@ router.post('/register', async (req, res, next) => {
       [result.lastID]
     );
 
+    // Ensure ID is a string for JWT (handles MongoDB ObjectId)
+    const userId = result.lastID && result.lastID.toString ? result.lastID.toString() : result.lastID;
+
     // Generate token
     const token = jwt.sign(
-      { id: result.lastID, email, role: 'customer' },
+      { id: userId, email, role: 'customer' },
       process.env.JWT_SECRET || 'your-secret-key-change-in-production',
       { expiresIn: '7d' }
     );
@@ -45,7 +48,7 @@ router.post('/register', async (req, res, next) => {
     res.status(201).json({
       token,
       user: {
-        id: result.lastID,
+        id: userId, // Use string version for consistency
         email,
         first_name,
         last_name,
@@ -87,9 +90,12 @@ router.post('/login', async (req, res, next) => {
 
     console.log('Login successful for:', email);
 
+    // Ensure ID is a string for JWT (handles MongoDB ObjectId)
+    const userId = user.id && user.id.toString ? user.id.toString() : user.id;
+
     // Generate token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: userId, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key-change-in-production',
       { expiresIn: '7d' }
     );
@@ -97,7 +103,7 @@ router.post('/login', async (req, res, next) => {
     res.json({
       token,
       user: {
-        id: user.id,
+        id: userId, // Use string version for consistency
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
