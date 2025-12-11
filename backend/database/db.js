@@ -9,7 +9,7 @@ let db;
 
 if (USE_MONGODB) {
   // MongoDB implementation
-  const { MongoClient } = require('mongodb');
+  const { MongoClient, ObjectId } = require('mongodb');
   const bcrypt = require('bcrypt');
   let mongoClient;
   let mongoDb;
@@ -289,7 +289,16 @@ if (USE_MONGODB) {
             const value = params[paramIndex++];
             
             if (field === 'id') {
-              query._id = parseInt(value) || value;
+              // Handle MongoDB ObjectId - convert string to ObjectId if needed
+              if (typeof value === 'string' && ObjectId.isValid(value)) {
+                query._id = new ObjectId(value);
+              } else if (value && value.toString) {
+                // If it's already an ObjectId or has toString method
+                query._id = value;
+              } else {
+                // Fallback for numeric IDs (SQLite)
+                query._id = parseInt(value) || value;
+              }
             } else if (field === 'active') {
               query.active = value === 1 || value === true || value === '1';
             } else {

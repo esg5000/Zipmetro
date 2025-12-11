@@ -13,14 +13,19 @@ const authenticateToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
     
+    console.log('🔍 Auth check - decoded token:', { id: decoded.id, email: decoded.email, role: decoded.role, idType: typeof decoded.id });
+
     const user = await db.getAsync(
       'SELECT id, email, role FROM users WHERE id = ?',
       [decoded.id]
     );
 
     if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+      console.error('❌ User not found for ID:', decoded.id, 'Type:', typeof decoded.id);
+      return res.status(401).json({ error: 'User not found. Please log in again.' });
     }
+    
+    console.log('✅ User authenticated:', { id: user.id, email: user.email, role: user.role });
 
     req.user = user;
     next();

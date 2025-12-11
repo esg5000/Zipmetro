@@ -1,0 +1,26 @@
+# Query: add product
+# ContextLines: 1
+
+5 results - 2 files
+
+index.html:
+  1310                <input id="admin-new-image" placeholder="Image URL (optional)" style="min-width:200px;" />
+  1311:               <button class="btn btn-primary" id="add-product-btn">Add product</button>
+  1312              </div>
+
+  1777  
+  1778:     // Admin: Add product
+  1779      document.getElementById('add-product-btn').addEventListener('click', async () => {
+
+frontend\index.html:
+  2030                </div>
+  2031:               <button class="btn btn-primary" id="add-product-btn">Add product</button>
+  2032              </div>
+
+  2775  
+  2776:     // Admin: Add product
+  2777      document.getElementById('add-product-btn').addEventListener('click', async () => {
+
+  2862        } catch(e) { 
+  2863:         console.error('Add product error:', e);
+  2864          status.textContent = 'Add failed: ' + e.message;

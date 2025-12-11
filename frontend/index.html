@@ -2817,13 +2817,14 @@
           
           const token = localStorage.getItem('authToken');
           const uploadRes = await fetch('/api/upload/image', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            body: formData,
-            credentials: 'include'
-          });
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${token}`
+    },
+    body: formData,
+    credentials: 'include'
+});
+
           
           if (uploadRes.ok) {
             const uploadData = await uploadRes.json();
