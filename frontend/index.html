@@ -7,15 +7,21 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Bungee&family=Righteous&family=Black+Ops+One&display=swap" rel="stylesheet">
+  <!-- Preconnect to Google Fonts for faster DNS/TLS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load fonts with optional display to prevent layout shift -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Bungee&family=Righteous&family=Black+Ops+One&display=optional" rel="stylesheet">
   <!-- ZipMetro logo - vibrant graffiti-style design -->
   <link rel="icon" href="assets/ZipMetroLogoRemoveBG (1).png" />
   <style>
     * { box-sizing: border-box; }
     :root{
-      --font-family: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
-      --font-graffiti: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
-      --font-body: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', sans-serif;
+      /* Metric-compatible fallback stacks to prevent layout shift */
+      --font-family: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', 'Franklin Gothic Bold', 'Helvetica Neue', sans-serif;
+      --font-graffiti: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', 'Franklin Gothic Bold', 'Helvetica Neue', sans-serif;
+      --font-body: 'Bungee', 'Righteous', 'Black Ops One', Impact, 'Arial Black', 'Franklin Gothic Bold', 'Helvetica Neue', sans-serif;
+      --font-input: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       --max-width:1200px;
       
       /* ZipMetro Brand Colors */
@@ -294,7 +300,7 @@
     .layout {
       display: grid;
       grid-template-columns: 280px 1fr;
-      min-height: calc(100vh - 72px);
+      min-height: calc(100dvh - 72px);
       max-width: var(--max-width);
       margin: 0 auto;
       gap: var(--space-xl);
@@ -423,7 +429,7 @@
       margin-bottom: var(--space-sm);
     }
     .search-input {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: var(--font-input);
       text-transform: none;
       width: 100%;
       padding: var(--space-md) var(--space-lg);
@@ -1021,7 +1027,7 @@
       /* Better modal/dialog on mobile */
       .modal, .dialog {
         margin: var(--space-md);
-        max-height: calc(100vh - 2 * var(--space-md) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        max-height: calc(100dvh - 2 * var(--space-md) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
         border-radius: var(--radius-lg);
       }
       
@@ -1286,7 +1292,7 @@
     }
     /* Standardized Input Styles */
     input, select, textarea {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: var(--font-input);
       font-size: 16px; /* Prevent zoom on iOS */
       text-transform: none;
       padding: var(--space-md) var(--space-lg);
@@ -1482,7 +1488,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         gap: var(--space-xs);
         align-items: stretch;
-        max-height: calc(100vh - 64px - env(safe-area-inset-top, 0px));
+        max-height: calc(100dvh - 64px - env(safe-area-inset-top, 0px));
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
@@ -2069,6 +2075,111 @@
         brandLogo.addEventListener('load', function() {
           brandLink.style.display = 'inline-flex';
         });
+      }
+    })();
+  </script>
+
+  <script>
+    // Development-only layout shift debug helper
+    // Only runs in development (localhost or when ?debug=layout-shift is in URL)
+    (function() {
+      // Check if we're in development mode
+      const isDev = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname.includes('localhost') ||
+                    new URLSearchParams(window.location.search).has('debug') ||
+                    window.location.search.includes('layout-shift');
+      
+      // Don't run in production
+      if (!isDev) return;
+      
+      // Check if PerformanceObserver is supported
+      if (!('PerformanceObserver' in window)) {
+        console.warn('[Layout Shift Debug] PerformanceObserver not supported');
+        return;
+      }
+      
+      let cumulativeShift = 0;
+      let shiftCount = 0;
+      
+      try {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            // Only log layout shifts (not other performance entries)
+            if (entry.entryType !== 'layout-shift' || entry.hadRecentInput) {
+              continue;
+            }
+            
+            const value = entry.value;
+            cumulativeShift += value;
+            shiftCount++;
+            
+            // Try to identify the element causing the shift
+            let elementInfo = 'Unknown element';
+            if (entry.sources && entry.sources.length > 0) {
+              const source = entry.sources[0];
+              if (source.node) {
+                // Get element selector
+                elementInfo = getElementSelector(source.node);
+                
+                // Also log the source type
+                if (source.previousRect && source.currentRect) {
+                  const width = source.currentRect.width;
+                  const height = source.currentRect.height;
+                  elementInfo += ` (${Math.round(width)}x${Math.round(height)}px)`;
+                }
+              }
+            }
+            
+            // Log the layout shift
+            console.group(`[Layout Shift #${shiftCount}] CLS: ${value.toFixed(4)}`);
+            console.log('Element:', elementInfo);
+            console.log('Cumulative CLS:', cumulativeShift.toFixed(4));
+            console.log('Entry:', entry);
+            console.groupEnd();
+          }
+        });
+        
+        observer.observe({ entryTypes: ['layout-shift'] });
+        
+        // Log summary on page unload
+        window.addEventListener('beforeunload', () => {
+          if (shiftCount > 0) {
+            console.log(`[Layout Shift Debug] Total shifts: ${shiftCount}, Cumulative CLS: ${cumulativeShift.toFixed(4)}`);
+          }
+        });
+        
+        console.log('[Layout Shift Debug] Enabled - monitoring layout shifts...');
+      } catch (error) {
+        console.error('[Layout Shift Debug] Error:', error);
+      }
+      
+      // Helper function to generate element selector
+      function getElementSelector(element) {
+        if (!element || !element.tagName) return 'Unknown';
+        
+        // Try to get a unique selector
+        if (element.id) {
+          return `#${element.id}`;
+        }
+        
+        if (element.className && typeof element.className === 'string') {
+          const classes = element.className.trim().split(/\s+/).filter(c => c);
+          if (classes.length > 0) {
+            return `.${classes[0]}`;
+          }
+        }
+        
+        // Fallback to tag name
+        let selector = element.tagName.toLowerCase();
+        
+        // Add parent context if available
+        if (element.parentElement) {
+          const parentTag = element.parentElement.tagName.toLowerCase();
+          selector = `${parentTag} > ${selector}`;
+        }
+        
+        return selector;
       }
     })();
   </script>
