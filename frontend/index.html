@@ -134,10 +134,12 @@
     /* Brand Logo - Vibrant Graffiti Style */
     .brand-logo {
       max-width: 140px;
+      width: 140px;
       height: auto;
-      width: auto;
+      aspect-ratio: auto;
       object-fit: contain;
       border-radius: 0;
+      display: block;
       display: block;
       margin: 0;
       padding: 0;
@@ -560,12 +562,14 @@
     
     .hero-logo {
       max-width: 160px;
+      width: 160px;
       height: auto;
-      width: auto;
+      aspect-ratio: auto;
       object-fit: contain;
       margin-top: 0;
       margin-bottom: 0;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      display: block;
     }
     
     .hero-headline {
@@ -699,29 +703,10 @@
     }
     .hero-carousel .carousel-slides { 
       display: flex; 
-      flex-direction: row;
+      flex-direction: column;
       gap: var(--space-lg); 
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: visible;
       scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-medium) var(--bg-secondary);
-      padding-bottom: var(--space-sm);
-      -webkit-overflow-scrolling: touch;
-    }
-    .hero-carousel .carousel-slides::-webkit-scrollbar {
-      height: 8px;
-    }
-    .hero-carousel .carousel-slides::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-      border-radius: var(--radius-full);
-    }
-    .hero-carousel .carousel-slides::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: var(--radius-full);
-    }
-    .hero-carousel .carousel-slides::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-light);
     }
     /* Standardized Hero Carousel Slide */
     .hero-carousel .carousel-slide { 
@@ -737,15 +722,12 @@
       opacity: 1; 
       transform: translateY(0); 
       transition: all var(--transition-base);
-      flex: 0 0 auto;
-      min-width: 300px;
-      max-width: 380px;
       width: 100%;
+      max-width: 100%;
     }
     @media (min-width: 1200px) {
       .hero-carousel .carousel-slide {
-        min-width: 350px;
-        max-width: 420px;
+        max-width: 100%;
       }
     }
     .hero-carousel .carousel-slide:hover {
@@ -759,16 +741,20 @@
     }
     .hero-carousel .slide-media { 
       width: 100%; 
-      min-height: 180px; 
+      aspect-ratio: 16/9;
       border-radius: 12px; 
       overflow: hidden;
       box-shadow: var(--shadow-sm);
+      position: relative;
     }
     .hero-carousel .slide-media img{ 
       width: 100%; 
       height: 100%; 
       object-fit: cover; 
-      display: block; 
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
     .hero-carousel .slide-body { 
       padding: 0; 
@@ -1090,7 +1076,8 @@
       border-color: var(--primary);
     }
     .card-media{ 
-      height: 200px; 
+      aspect-ratio: 4/3;
+      width: 100%;
       border-radius: 12px; 
       background: var(--bg-secondary); 
       display: flex; 
@@ -1100,6 +1087,7 @@
       font-weight: 600; 
       font-size: 14px;
       overflow: hidden;
+      position: relative;
     }
     .card{ 
       opacity: 0; 
@@ -1115,7 +1103,10 @@
       height: 100%; 
       object-fit: cover; 
       border-radius: 12px; 
-      display: block; 
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
     /* skeleton shimmer for image loading */
     .skeleton{ 
@@ -1531,6 +1522,7 @@
       
       .brand-logo {
         max-width: 110px;
+        width: 110px;
         height: auto;
       }
       
