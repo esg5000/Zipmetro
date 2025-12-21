@@ -114,9 +114,7 @@
     }
     header {
       background: #0F0F0F;
-      padding: 0;
-      padding-left: 16px;
-      padding-right: var(--space-xl);
+      padding: var(--space-md) var(--space-lg); /* px-4 py-4 */
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -387,7 +385,7 @@
     .category-list {
       list-style: none;
       padding: 0;
-      margin: 0 0 var(--space-xl);
+      margin: 0 0 var(--space-xl); /* mb-6 equivalent */
       display: flex;
       flex-direction: row;
       gap: 12px;
@@ -396,6 +394,10 @@
       scrollbar-width: none; /* Firefox */
       -ms-overflow-style: none; /* IE and Edge */
       white-space: nowrap;
+      width: 100%;
+    }
+    .category-list-container {
+      margin-bottom: var(--space-xl); /* mb-6 spacing after tabs */
     }
     .category-list::-webkit-scrollbar {
       display: none; /* Chrome, Safari, Opera */
@@ -964,7 +966,7 @@
         right: max(var(--space-md), env(safe-area-inset-right, 0px)); 
         bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px)); 
         gap: var(--space-md); 
-        z-index: 9998;
+        z-index: 50; /* z-50 to stay above other content */
         padding: var(--space-md);
         padding-bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px));
         background: var(--surface);
@@ -1156,15 +1158,16 @@
     /* Standardized Card Styles */
     .card {
       background: var(--surface);
-      border-radius: 16px;
-      padding: var(--space-lg);
+      border-radius: 16px; /* rounded-2xl */
+      padding: 0;
       border: 1px solid var(--border-light);
       display: flex;
       flex-direction: column;
-      gap: var(--space-md);
+      gap: 0;
       box-shadow: var(--shadow-md);
       transition: all var(--transition-base);
       height: 100%;
+      overflow: hidden;
     }
     .card:hover{ 
       transform: translateY(-2px); 
@@ -1174,7 +1177,7 @@
     .card-media{ 
       aspect-ratio: 4/3;
       width: 100%;
-      border-radius: 12px; 
+      border-radius: 16px 16px 0 0; /* rounded-t-2xl */
       background: var(--bg-secondary); 
       display: flex; 
       align-items: center; 
@@ -1184,6 +1187,7 @@
       font-size: 14px;
       overflow: hidden;
       position: relative;
+      margin: 0;
     }
     .card{ 
       opacity: 0; 
@@ -1198,7 +1202,7 @@
       width: 100%; 
       height: 100%; 
       object-fit: cover; 
-      border-radius: 12px; 
+      border-radius: 16px 16px 0 0; /* rounded-t-2xl */
       display: block;
       position: absolute;
       top: 0;
@@ -1220,11 +1224,20 @@
       transition: opacity .3s ease; 
       opacity: 1; 
     }
+    /* Card info section - below image */
+    .card-info {
+      padding: var(--space-lg); /* p-4 or p-6 equivalent */
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      flex: 1;
+    }
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: var(--space-md);
+      margin-bottom: var(--space-xs);
     }
     .card-title {
       font-size: 17px;
@@ -1233,12 +1246,21 @@
       line-height: 1.3;
       flex: 1;
       font-family: var(--font-body);
+      margin-bottom: 4px;
+    }
+    .card-category {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
     }
     .card-desc {
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.5;
       min-height: 40px;
+      margin-bottom: var(--space-sm);
     }
     .card-footer {
       display: flex;
@@ -1251,7 +1273,7 @@
     .price {
       font-size: 22px;
       font-weight: 800;
-      color: var(--accent);
+      color: #FACC15; /* text-yellow-400 */
       letter-spacing: 0.01em;
       font-family: var(--font-body);
     }
@@ -1996,13 +2018,15 @@
 
   <div class="layout">
     <aside>
-      <h3>Categories</h3>
-      <ul class="category-list" id="category-list">
-        <li class="category-item active" data-category="Flower">Flower</li>
-        <li class="category-item" data-category="Vape">Vape</li>
-        <li class="category-item" data-category="Extracts">Extracts</li>
-        <li class="category-item" data-category="Edibles">Edibles</li>
-      </ul>
+      <div class="category-list-container">
+        <h3>Categories</h3>
+        <ul class="category-list" id="category-list">
+          <li class="category-item active" data-category="Flower">Flower</li>
+          <li class="category-item" data-category="Vape">Vape</li>
+          <li class="category-item" data-category="Extracts">Extracts</li>
+          <li class="category-item" data-category="Edibles">Edibles</li>
+        </ul>
+      </div>
 
       <div class="filter-block">
         <div style="margin-bottom: 6px;">Search products</div>
@@ -2999,17 +3023,19 @@
           <div class="card-media skeleton" aria-hidden="true">
             <img src="${imgUrl}" alt="${p.name}" loading="lazy" />
           </div>
-          <div class="card-header">
-            <div>
-              <div class="card-title">${p.name}</div>
-              <div class="text-muted" style="font-size:11px;">${p.category}</div>
+          <div class="card-info">
+            <div class="card-header">
+              <div>
+                <div class="card-title">${p.name}</div>
+                <div class="card-category">${p.category}</div>
+              </div>
+              <span class="tag">${p.thc} mg THC</span>
             </div>
-            <span class="tag">${p.thc} mg THC</span>
-          </div>
-          <div class="card-desc">${p.desc}</div>
-          <div class="card-footer">
-            <span class="price">${formatMoney(p.price)}</span>
-            <button class="btn btn-primary" data-add-id="${p.id}">Add to cart</button>
+            <div class="card-desc">${p.desc}</div>
+            <div class="card-footer">
+              <span class="price">${formatMoney(p.price)}</span>
+              <button class="btn btn-primary" data-add-id="${p.id}">Add to cart</button>
+            </div>
           </div>
         `;
         // handle image load to remove skeleton and fade in
