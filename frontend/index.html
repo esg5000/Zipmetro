@@ -1716,35 +1716,45 @@
     .carousel-slide-admin {
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
-      padding: var(--space-lg);
+      padding: var(--space-xl);
       background: var(--bg-secondary);
       margin-bottom: var(--space-lg);
+      width: 100%;
+      box-sizing: border-box;
     }
     .carousel-slide-admin-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: var(--space-md);
+      margin-bottom: var(--space-lg);
     }
     .carousel-slide-admin-title {
       font-weight: 600;
       color: var(--text-primary);
-      font-size: 16px;
+      font-size: 18px;
     }
     .carousel-slide-admin-preview {
       width: 100%;
-      max-width: 300px;
+      max-width: 600px;
       aspect-ratio: 16/9;
       border-radius: var(--radius-md);
       overflow: hidden;
-      margin-bottom: var(--space-md);
+      margin-bottom: var(--space-lg);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
     }
     .carousel-slide-admin-preview img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
+    }
+    #carousel-slides-admin {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
     }
     .checkbox-group {
       display: flex;
