@@ -388,30 +388,45 @@
       list-style: none;
       padding: 0;
       margin: 0 0 var(--space-xl);
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      white-space: nowrap;
     }
-    /* Standardized Category Item */
+    .category-list::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+    /* Standardized Category Item - Horizontal Tab Style */
     .category-item {
-      padding: var(--space-md) var(--space-lg);
-      margin-bottom: var(--space-xs);
-      border-radius: 12px;
+      padding: 12px 24px;
+      margin-bottom: 0;
+      border-radius: 9999px; /* rounded-full */
       cursor: pointer;
       font-size: 15px;
       font-weight: 500;
-      color: var(--text-secondary);
-      transition: all var(--transition-base);
+      color: rgba(209, 213, 219, 1); /* gray-300 */
+      transition: all 0.3s ease;
       min-height: var(--touch-target);
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: rgba(31, 41, 55, 1); /* gray-800 */
+      border: none;
     }
     .category-item.active {
-      background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+      background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%); /* purple-500 to pink-500 */
       color: #FFFFFF;
-      font-weight: 600;
+      font-weight: 500;
       box-shadow: var(--shadow-md);
     }
     .category-item:hover:not(.active) {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
+      background: rgba(55, 65, 81, 1); /* gray-700 */
+      color: rgba(209, 213, 219, 1); /* gray-300 */
     }
     .category-item:focus-visible {
       outline: none;
@@ -706,13 +721,15 @@
       margin-bottom: var(--space-xl); 
       position: relative; 
       overflow: hidden;
+      border-radius: 16px;
     }
     .hero-carousel .carousel-slides { 
       display: flex; 
-      flex-direction: column;
-      gap: var(--space-lg); 
-      overflow: visible;
+      flex-direction: row;
+      gap: 0;
+      overflow: hidden;
       scroll-behavior: smooth;
+      position: relative;
     }
     /* Standardized Hero Carousel Slide */
     .hero-carousel .carousel-slide { 
@@ -725,25 +742,26 @@
       background: var(--surface);
       border: 1px solid var(--border-light); 
       box-shadow: var(--shadow-md); 
-      opacity: 1; 
-      transform: translateY(0); 
-      transition: all var(--transition-base);
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 0.5s ease, transform 0.5s ease;
       width: 100%;
-      max-width: 100%;
-    }
-    @media (min-width: 1200px) {
-      .hero-carousel .carousel-slide {
-        max-width: 100%;
-      }
-    }
-    .hero-carousel .carousel-slide:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-xl);
-      border-color: var(--border-medium);
+      min-width: 100%;
+      flex-shrink: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
     .hero-carousel .carousel-slide.active { 
       opacity: 1; 
-      transform: translateY(0); 
+      transform: translateX(0);
+      position: relative;
+    }
+    .hero-carousel .carousel-slide.prev {
+      transform: translateX(-100%);
+    }
+    .hero-carousel .carousel-slide.next {
+      transform: translateX(100%);
     }
     .hero-carousel .slide-media { 
       width: 100%; 
@@ -806,11 +824,77 @@
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
     }
+    /* Carousel Controls */
     .hero-carousel .carousel-controls{ 
-      display: none; 
+      display: flex;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      justify-content: space-between;
+      padding: 0 var(--space-md);
+      pointer-events: none;
+      z-index: 10;
     }
+    .hero-carousel .carousel-btn {
+      pointer-events: all;
+      background: rgba(15, 15, 15, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      font-size: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .hero-carousel .carousel-btn:hover {
+      background: rgba(15, 15, 15, 0.9);
+      transform: scale(1.1);
+    }
+    .hero-carousel .carousel-btn:active {
+      transform: scale(0.95);
+    }
+    .hero-carousel .carousel-btn.prev {
+      left: var(--space-md);
+    }
+    .hero-carousel .carousel-btn.next {
+      right: var(--space-md);
+    }
+    /* Carousel Indicators */
     .hero-carousel .carousel-indicators{ 
-      display: none; 
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) 0;
+      position: absolute;
+      bottom: var(--space-md);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    .hero-carousel .carousel-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      backdrop-filter: blur(4px);
+    }
+    .hero-carousel .carousel-indicator.active {
+      background: #D8FF3F;
+      border-color: #D8FF3F;
+      width: 24px;
+      border-radius: 5px;
+    }
+    .hero-carousel .carousel-indicator:hover {
+      background: rgba(255, 255, 255, 0.6);
     }
 
     /* Mobile bottom bar for quick actions */
@@ -849,18 +933,24 @@
       .hero-carousel .carousel-slide{ 
         flex-direction: column; 
         padding: var(--space-lg);
-        min-width: 280px;
-        max-width: 320px;
       }
       .hero-carousel .slide-media{ 
         width: 100%; 
-        height: 180px; 
+        aspect-ratio: 16/9;
       }
       .hero-carousel .slide-body{ 
         align-items: flex-start; 
       }
       .hero-carousel .slide-title {
         font-size: 20px;
+      }
+      .hero-carousel .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      .hero-carousel .carousel-indicators {
+        bottom: var(--space-sm);
       }
       
       body {
@@ -1449,6 +1539,181 @@
       outline: none;
       box-shadow: var(--focus-ring);
     }
+    /* Tab Interface Styles */
+    .tab-container {
+      margin-bottom: var(--space-xl);
+    }
+    .tab-header {
+      display: flex;
+      gap: var(--space-sm);
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: var(--space-xl);
+      overflow-x: auto;
+    }
+    .tab-header::-webkit-scrollbar {
+      display: none;
+    }
+    .tab-button {
+      padding: var(--space-md) var(--space-xl);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      min-height: 48px;
+    }
+    .tab-button:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+    .tab-button.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--primary);
+      background: var(--bg-secondary);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    /* Toggle Switch Styles */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      margin-right: var(--space-md);
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(31, 41, 55, 1);
+      transition: 0.3s;
+      border-radius: 28px;
+      border: 1px solid var(--border-medium);
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
+      border-color: var(--primary);
+    }
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    .toggle-switch input:focus + .toggle-slider {
+      box-shadow: var(--focus-ring);
+    }
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      margin-bottom: var(--space-sm);
+      transition: all 0.3s ease;
+    }
+    .toggle-item:hover {
+      background: var(--bg-tertiary);
+    }
+    .toggle-label {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .toggle-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    /* Improved Form Styles */
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(17, 24, 39, 1);
+      border: 1px solid rgba(31, 41, 55, 1);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(184, 62, 191, 0.1);
+    }
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+    .form-row {
+      display: flex;
+      gap: var(--space-md);
+    }
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-lg);
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    .checkbox-group label {
+      flex: 1;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
     .text-muted {
       color: var(--text-muted);
       font-size: 14px;
@@ -1555,6 +1820,40 @@
         min-height: 44px !important;
         padding: var(--space-sm) var(--space-md) !important;
         font-size: 14px !important;
+      }
+      
+      /* Tab interface mobile styles */
+      .tab-header {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .tab-header::-webkit-scrollbar {
+        display: none;
+      }
+      .tab-button {
+        min-width: auto;
+        padding: var(--space-sm) var(--space-md);
+        font-size: 14px;
+      }
+      .form-row {
+        flex-direction: column;
+      }
+      .form-row .form-group {
+        margin-bottom: var(--space-lg);
+      }
+      .toggle-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+      }
+      .toggle-switch {
+        align-self: flex-start;
+      }
+      .form-group input,
+      .form-group select {
+        min-height: 48px;
+        font-size: 16px;
       }
       
       /* Fix user status display on mobile */
@@ -1818,125 +2117,171 @@
 
       <!-- ACCOUNT & ID SECTION -->
       <section id="account-section" class="section">
-        <h2>Account, ID Upload & Notifications</h2>
+        <h2>Account & Settings</h2>
         
-        <!-- Login/Register Section -->
-        <div id="login-register-section" class="card" style="margin-bottom: var(--space-xl);">
-          <h3>Login / Register</h3>
-          <div class="stack">
-            <div class="row" style="gap: var(--space-lg);">
-              <div style="flex: 1;">
-                <h4 style="margin-bottom: var(--space-md); font-size: 16px;">Login</h4>
-                <div class="stack">
-                  <div>
-                    <label>Email</label>
+        <!-- Main Tab Navigation -->
+        <div class="tab-container">
+          <div class="tab-header" role="tablist">
+            <button class="tab-button active" data-tab="account-tab" role="tab" aria-selected="true">Account</button>
+            <button class="tab-button" data-tab="id-tab" role="tab" aria-selected="false">ID Upload</button>
+            <button class="tab-button" data-tab="notifications-tab" role="tab" aria-selected="false">Notifications</button>
+          </div>
+
+          <!-- Account Tab Content -->
+          <div id="account-tab" class="tab-content active">
+            <div class="card">
+              <h3>Login / Register</h3>
+              
+              <!-- Account Sub-tabs -->
+              <div class="tab-header" style="margin-top: var(--space-md); margin-bottom: var(--space-lg);">
+                <button class="tab-button active" data-subtab="login-subtab" style="font-size: 14px; padding: var(--space-sm) var(--space-lg);">Login</button>
+                <button class="tab-button" data-subtab="register-subtab" style="font-size: 14px; padding: var(--space-sm) var(--space-lg);">Register</button>
+              </div>
+
+              <!-- Login Sub-tab -->
+              <div id="login-subtab" class="tab-content active">
+                <form class="stack" style="gap: var(--space-lg);">
+                  <div class="form-group">
+                    <label for="login-email">Email</label>
                     <input id="login-email" type="email" placeholder="admin@zipmetro.com" autocapitalize="off" autocomplete="email" />
                   </div>
-                  <div>
-                    <label>Password</label>
+                  <div class="form-group">
+                    <label for="login-password">Password</label>
                     <input id="login-password" type="password" placeholder="Password" autocapitalize="off" autocomplete="current-password" />
                   </div>
-                  <button class="btn btn-primary" id="login-btn">Login</button>
+                  <button type="button" class="btn btn-primary" id="login-btn" style="width: 100%; margin-top: var(--space-md);">Login</button>
                   <div id="login-status" class="text-muted"></div>
+                </form>
+                <div class="notice" style="margin-top: var(--space-lg);">
+                  <strong>Default Admin:</strong> admin@zipmetro.com / admin123
                 </div>
               </div>
-              <div style="flex: 1;">
-                <h4 style="margin-bottom: var(--space-md); font-size: 16px;">Register</h4>
-                <div class="stack">
-                  <div>
-                    <label>Email</label>
+
+              <!-- Register Sub-tab -->
+              <div id="register-subtab" class="tab-content">
+                <form class="stack" style="gap: var(--space-lg);">
+                  <div class="form-group">
+                    <label for="register-email">Email</label>
                     <input id="register-email" type="email" placeholder="your@email.com" autocapitalize="off" autocomplete="email" />
                   </div>
-                  <div>
-                    <label>Password</label>
+                  <div class="form-group">
+                    <label for="register-password">Password</label>
                     <input id="register-password" type="password" placeholder="Password" autocapitalize="off" autocomplete="new-password" />
                   </div>
-                  <div class="row">
-                    <div style="flex:1;">
-                      <label>First Name</label>
-                      <input id="register-first-name" placeholder="First name" />
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-first-name">First Name</label>
+                      <input id="register-first-name" type="text" placeholder="First name" autocomplete="given-name" />
                     </div>
-                    <div style="flex:1;">
-                      <label>Last Name</label>
-                      <input id="register-last-name" placeholder="Last name" />
+                    <div class="form-group">
+                      <label for="register-last-name">Last Name</label>
+                      <input id="register-last-name" type="text" placeholder="Last name" autocomplete="family-name" />
                     </div>
                   </div>
-                  <button class="btn btn-outline" id="register-btn">Register</button>
+                  <button type="button" class="btn btn-outline" id="register-btn" style="width: 100%; margin-top: var(--space-md);">Register</button>
                   <div id="register-status" class="text-muted"></div>
-                </div>
-              </div>
-            </div>
-            <div class="notice" style="margin-top: var(--space-md);">
-              <strong>Default Admin:</strong> admin@zipmetro.com / admin123
-            </div>
-          </div>
-        </div>
-        
-        <div class="two-col">
-          <div class="card">
-            <h3>Upload ID (one-time)</h3>
-            <div class="stack">
-              <div class="row">
-                <div style="flex:1;">
-                  <label>First name</label>
-                  <input id="id-first-name" />
-                </div>
-                <div style="flex:1;">
-                  <label>Last name</label>
-                  <input id="id-last-name" />
-                </div>
-              </div>
-              <div class="row">
-                <div style="flex:1;">
-                  <label>Date of birth</label>
-                  <input id="id-dob" type="date" />
-                </div>
-                <div style="flex:1;">
-                  <label>ID type</label>
-                  <select id="id-type">
-                    <option value="Drivers license">Driver’s license</option>
-                    <option value="State ID">State ID</option>
-                    <option value="Passport">Passport</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label>Upload ID image (front)</label>
-                <input id="id-file" type="file" accept="image/*" />
-              </div>
-              <div>
-                <label>
-                  <input type="checkbox" id="id-consent" />
-                  I consent to ZipMetro storing my ID for age verification in compliance with local laws.
-                </label>
-              </div>
-              <button class="btn btn-primary" id="submit-id-btn">Submit ID</button>
-              <div id="id-status" class="text-muted"></div>
-              <div class="notice">
-                In a real app this would hit a secure backend + KYC/ID verification service,
-                with proper encryption and retention rules.
+                </form>
               </div>
             </div>
           </div>
 
-          <div class="card">
-            <h3>Notification preferences</h3>
-            <div class="stack">
-              <div class="chip-row" id="notif-chips">
-                <div class="chip active" data-channel="sms">SMS</div>
-                <div class="chip active" data-channel="email">Email</div>
-                <div class="chip" data-channel="push">Push (app)</div>
+          <!-- ID Upload Tab Content -->
+          <div id="id-tab" class="tab-content">
+            <div class="card">
+              <h3>Upload ID (one-time)</h3>
+              <div class="stack" style="gap: var(--space-lg);">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="id-first-name">First name</label>
+                    <input id="id-first-name" type="text" autocomplete="given-name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="id-last-name">Last name</label>
+                    <input id="id-last-name" type="text" autocomplete="family-name" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="id-dob">Date of birth</label>
+                    <input id="id-dob" type="date" autocomplete="bday" />
+                  </div>
+                  <div class="form-group">
+                    <label for="id-type">ID type</label>
+                    <select id="id-type">
+                      <option value="Drivers license">Driver's license</option>
+                      <option value="State ID">State ID</option>
+                      <option value="Passport">Passport</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="id-file">Upload ID image (front)</label>
+                  <input id="id-file" type="file" accept="image/*" style="padding: var(--space-md);" />
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="id-consent" />
+                  <label for="id-consent">
+                    I consent to ZipMetro storing my ID for age verification in compliance with local laws.
+                  </label>
+                </div>
+                <button class="btn btn-primary" id="submit-id-btn" style="width: 100%;">Submit ID</button>
+                <div id="id-status" class="text-muted"></div>
+                <div class="notice">
+                  In a real app this would hit a secure backend + KYC/ID verification service,
+                  with proper encryption and retention rules.
+                </div>
               </div>
-              <div class="notice">
-                These preferences will be used for:
-                <ul style="margin: 4px 0 0 16px; padding: 0;">
-                  <li>Order status: received, out for delivery, delivered</li>
-                  <li>Critical updates: driver delays, address issues</li>
-                  <li>Optional promos (if enabled in admin)</li>
-                </ul>
+            </div>
+          </div>
+
+          <!-- Notifications Tab Content -->
+          <div id="notifications-tab" class="tab-content">
+            <div class="card">
+              <h3>Notification Preferences</h3>
+              <div class="stack" style="gap: var(--space-lg);">
+                <div>
+                  <div class="toggle-item">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="notif-sms-toggle" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <div style="flex: 1;">
+                      <div class="toggle-label">SMS Notifications</div>
+                      <div class="toggle-description">Receive order updates via text message</div>
+                    </div>
+                  </div>
+                  <div class="toggle-item">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="notif-email-toggle" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <div style="flex: 1;">
+                      <div class="toggle-label">Email Notifications</div>
+                      <div class="toggle-description">Receive order updates via email</div>
+                    </div>
+                  </div>
+                  <div class="toggle-item">
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="notif-push-toggle" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                    <div style="flex: 1;">
+                      <div class="toggle-label">Push Notifications</div>
+                      <div class="toggle-description">Receive push notifications in the app</div>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" id="save-notif-btn" style="width: 100%;">Save Preferences</button>
+                <div id="notif-status" class="text-muted"></div>
+                <div class="notice">
+                  <strong>These preferences will be used for:</strong>
+                  <ul style="margin: 8px 0 0 20px; padding: 0;">
+                    <li>Order status: received, out for delivery, delivered</li>
+                    <li>Critical updates: driver delays, address issues</li>
+                    <li>Optional promos (if enabled in admin)</li>
+                  </ul>
+                </div>
               </div>
-              <button class="btn btn-outline" id="save-notif-btn">Save preferences</button>
-              <div id="notif-status" class="text-muted"></div>
             </div>
           </div>
         </div>
@@ -2503,6 +2848,11 @@
         carousel.setAttribute('aria-label', 'Promotions');
         carousel.innerHTML = `
           <div class="carousel-slides" aria-live="polite"></div>
+          <div class="carousel-controls">
+            <button class="carousel-btn prev" aria-label="Previous slide">‹</button>
+            <button class="carousel-btn next" aria-label="Next slide">›</button>
+          </div>
+          <div class="carousel-indicators" role="tablist"></div>
         `;
         grid.parentNode.insertBefore(carousel, grid);
 
@@ -2514,11 +2864,14 @@
         ];
 
         const slidesEl = carousel.querySelector('.carousel-slides');
+        const indicatorsEl = carousel.querySelector('.carousel-indicators');
+        let currentIndex = 0;
+        let autoRotateInterval = null;
 
-        // Create all slides and display them all at once
+        // Create slides
         slides.forEach((s, i) => {
           const sl = document.createElement('div');
-          sl.className = 'carousel-slide active';
+          sl.className = `carousel-slide ${i === 0 ? 'active' : ''}`;
           sl.innerHTML = `
             <div class="slide-media skeleton"><img src="${s.img}" alt="${s.title}" loading="lazy"/></div>
             <div class="slide-body">
@@ -2529,6 +2882,99 @@
           `;
           sl.dataset.index = i;
           slidesEl.appendChild(sl);
+
+          // Create indicator
+          const indicator = document.createElement('button');
+          indicator.className = `carousel-indicator ${i === 0 ? 'active' : ''}`;
+          indicator.setAttribute('role', 'tab');
+          indicator.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          indicator.dataset.index = i;
+          indicatorsEl.appendChild(indicator);
+        });
+
+        // Update slide visibility
+        function updateSlides() {
+          slidesEl.querySelectorAll('.carousel-slide').forEach((slide, i) => {
+            slide.classList.remove('active', 'prev', 'next');
+            if (i === currentIndex) {
+              slide.classList.add('active');
+            } else if (i < currentIndex) {
+              slide.classList.add('prev');
+            } else {
+              slide.classList.add('next');
+            }
+          });
+
+          // Update indicators
+          indicatorsEl.querySelectorAll('.carousel-indicator').forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === currentIndex);
+          });
+        }
+
+        // Navigate functions
+        function goToSlide(index) {
+          currentIndex = (index + slides.length) % slides.length;
+          updateSlides();
+          resetAutoRotate();
+        }
+
+        function nextSlide() {
+          goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+          goToSlide(currentIndex - 1);
+        }
+
+        // Auto-rotate
+        function startAutoRotate() {
+          autoRotateInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        function resetAutoRotate() {
+          if (autoRotateInterval) {
+            clearInterval(autoRotateInterval);
+          }
+          startAutoRotate();
+        }
+
+        // Event listeners
+        carousel.querySelector('.carousel-btn.next').addEventListener('click', () => {
+          nextSlide();
+        });
+
+        carousel.querySelector('.carousel-btn.prev').addEventListener('click', () => {
+          prevSlide();
+        });
+
+        indicatorsEl.querySelectorAll('.carousel-indicator').forEach((indicator) => {
+          indicator.addEventListener('click', () => {
+            goToSlide(parseInt(indicator.dataset.index));
+          });
+        });
+
+        // Pause auto-rotate on hover
+        carousel.addEventListener('mouseenter', () => {
+          if (autoRotateInterval) {
+            clearInterval(autoRotateInterval);
+          }
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+          startAutoRotate();
+        });
+
+        // Initialize
+        updateSlides();
+        startAutoRotate();
+
+        // Handle image loading
+        slidesEl.querySelectorAll('.slide-media img').forEach(img => {
+          img.addEventListener('load', () => {
+            img.closest('.slide-media')?.classList.remove('skeleton');
+            img.style.opacity = '1';
+          });
+          img.style.opacity = '0';
         });
       }
 
@@ -2980,14 +3426,86 @@
       }
     });
 
-    document.getElementById("notif-chips").addEventListener("click", e => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      const channel = chip.getAttribute("data-channel");
-      const newVal = !chip.classList.contains("active");
-      notifPrefs[channel] = newVal;
-      chip.classList.toggle("active", newVal);
-    });
+    // Tab switching functionality
+    function initTabs() {
+      // Main tabs
+      document.querySelectorAll('.tab-button[data-tab]').forEach(button => {
+        button.addEventListener('click', () => {
+          const tabId = button.getAttribute('data-tab');
+          
+          // Update button states
+          document.querySelectorAll('.tab-button[data-tab]').forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+          });
+          button.classList.add('active');
+          button.setAttribute('aria-selected', 'true');
+          
+          // Update content visibility
+          document.querySelectorAll('.tab-content[id$="-tab"]').forEach(content => {
+            content.classList.remove('active');
+          });
+          const targetContent = document.getElementById(tabId);
+          if (targetContent) {
+            targetContent.classList.add('active');
+          }
+        });
+      });
+
+      // Sub-tabs (Login/Register)
+      document.querySelectorAll('.tab-button[data-subtab]').forEach(button => {
+        button.addEventListener('click', () => {
+          const subtabId = button.getAttribute('data-subtab');
+          
+          // Update button states
+          document.querySelectorAll('.tab-button[data-subtab]').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          button.classList.add('active');
+          
+          // Update content visibility
+          const parentTab = button.closest('.tab-content');
+          if (parentTab) {
+            parentTab.querySelectorAll('.tab-content[id$="-subtab"]').forEach(content => {
+              content.classList.remove('active');
+            });
+            const targetContent = document.getElementById(subtabId);
+            if (targetContent) {
+              targetContent.classList.add('active');
+            }
+          }
+        });
+      });
+    }
+
+    // Initialize notification toggles
+    function initNotificationToggles() {
+      const smsToggle = document.getElementById('notif-sms-toggle');
+      const emailToggle = document.getElementById('notif-email-toggle');
+      const pushToggle = document.getElementById('notif-push-toggle');
+
+      // Set initial states
+      if (smsToggle) smsToggle.checked = notifPrefs.sms;
+      if (emailToggle) emailToggle.checked = notifPrefs.email;
+      if (pushToggle) pushToggle.checked = notifPrefs.push;
+
+      // Add change listeners
+      if (smsToggle) {
+        smsToggle.addEventListener('change', () => {
+          notifPrefs.sms = smsToggle.checked;
+        });
+      }
+      if (emailToggle) {
+        emailToggle.addEventListener('change', () => {
+          notifPrefs.email = emailToggle.checked;
+        });
+      }
+      if (pushToggle) {
+        pushToggle.addEventListener('change', () => {
+          notifPrefs.push = pushToggle.checked;
+        });
+      }
+    }
 
     document.getElementById("save-notif-btn").addEventListener("click", () => {
       const status = document.getElementById("notif-status");
@@ -2996,6 +3514,7 @@
         .map(([k]) => k.toUpperCase())
         .join(", ") || "NONE";
       status.textContent = "Saved. Channels enabled: " + enabled + ".";
+      status.style.color = 'var(--text-primary)';
     });
 
     // --- Auth Event Listeners ----------------------------------------------
@@ -3035,6 +3554,9 @@
     // Load products from API (falls back to client-side if API unavailable)
     loadProductsFromApi();
     renderAdminProducts();
+    // Initialize tabs and notification toggles
+    initTabs();
+    initNotificationToggles();
     // accessibility: focus main when skip-link used
     document.querySelector('.skip-link').addEventListener('click', (e)=>{
       const m = document.getElementById('main-content');
