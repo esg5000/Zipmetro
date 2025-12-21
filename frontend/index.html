@@ -373,10 +373,20 @@
     }
     .section {
       display: none;
+      width: 100%;
+      box-sizing: border-box;
     }
     .section.active {
       display: block;
       animation: fadeIn 0.3s ease;
+    }
+    main#main-content {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #shop-section {
+      width: 100%;
+      box-sizing: border-box;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -724,6 +734,9 @@
       position: relative; 
       overflow: hidden;
       border-radius: 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .hero-carousel .carousel-slides { 
       display: flex; 
@@ -732,6 +745,9 @@
       overflow: hidden;
       scroll-behavior: smooth;
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 400px;
     }
     /* Standardized Hero Carousel Slide */
     .hero-carousel .carousel-slide { 
@@ -749,10 +765,12 @@
       transition: opacity 0.5s ease, transform 0.5s ease;
       width: 100%;
       min-width: 100%;
+      max-width: 100%;
       flex-shrink: 0;
       position: absolute;
       top: 0;
       left: 0;
+      box-sizing: border-box;
     }
     .hero-carousel .carousel-slide.active { 
       opacity: 1; 
@@ -772,6 +790,9 @@
       overflow: hidden;
       box-shadow: var(--shadow-sm);
       position: relative;
+      margin: 0;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }
     .hero-carousel .slide-media img{ 
       width: 100%; 
@@ -789,6 +810,7 @@
       gap: var(--space-md); 
       flex: 1;
       width: 100%;
+      box-sizing: border-box;
     }
     .hero-carousel .slide-title{ 
       font-family: var(--font-graffiti);
@@ -837,6 +859,9 @@
       padding: 0 var(--space-md);
       pointer-events: none;
       z-index: 10;
+      left: 0;
+      right: 0;
+      box-sizing: border-box;
     }
     .hero-carousel .carousel-btn {
       pointer-events: all;
@@ -878,6 +903,9 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
+      width: auto;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .hero-carousel .carousel-indicator {
       width: 10px;
@@ -932,13 +960,24 @@
         margin-bottom: var(--space-lg);
       }
       
+      /* Ensure carousel is full width on mobile */
+      .hero-carousel {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+      
       .hero-carousel .carousel-slide{ 
         flex-direction: column; 
         padding: var(--space-lg);
+        width: 100%;
+        max-width: 100%;
       }
       .hero-carousel .slide-media{ 
         width: 100%; 
         aspect-ratio: 16/9;
+        max-width: 100%;
       }
       .hero-carousel .slide-body{ 
         align-items: flex-start; 
