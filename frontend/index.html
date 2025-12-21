@@ -1712,6 +1712,40 @@
       flex: 1;
       margin-bottom: 0;
     }
+    /* Carousel Admin Styles */
+    .carousel-slide-admin {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      background: var(--bg-secondary);
+      margin-bottom: var(--space-lg);
+    }
+    .carousel-slide-admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    .carousel-slide-admin-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+    .carousel-slide-admin-preview {
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: var(--space-md);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-light);
+    }
+    .carousel-slide-admin-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .checkbox-group {
       display: flex;
       align-items: flex-start;
@@ -2018,21 +2052,6 @@
 
   <div class="layout">
     <aside>
-      <div class="category-list-container">
-        <h3>Categories</h3>
-        <ul class="category-list" id="category-list">
-          <li class="category-item active" data-category="Flower">Flower</li>
-          <li class="category-item" data-category="Vape">Vape</li>
-          <li class="category-item" data-category="Extracts">Extracts</li>
-          <li class="category-item" data-category="Edibles">Edibles</li>
-        </ul>
-      </div>
-
-      <div class="filter-block">
-        <div style="margin-bottom: 6px;">Search products</div>
-        <input id="search-input" class="search-input" placeholder="Type to filter…" />
-      </div>
-
       <div class="ad-block" id="ad-block">
         <div class="ad-title">Featured Deal</div>
         <div class="ad-content" id="ad-content">
@@ -2051,6 +2070,22 @@
             <h1 class="hero-headline">Same-Day Delivery<br/>Age-Verified & Secure</h1>
             <p class="hero-subheadline">Premium cannabis products delivered to your door. Fast, discreet, and fully compliant.</p>
           </div>
+        </div>
+        
+        <!-- Categories and Search Bar -->
+        <div class="category-list-container" style="margin-bottom: var(--space-lg);">
+          <h3>Categories</h3>
+          <ul class="category-list" id="category-list">
+            <li class="category-item active" data-category="Flower">Flower</li>
+            <li class="category-item" data-category="Vape">Vape</li>
+            <li class="category-item" data-category="Extracts">Extracts</li>
+            <li class="category-item" data-category="Edibles">Edibles</li>
+          </ul>
+        </div>
+
+        <div class="filter-block" style="margin-bottom: var(--space-xl);">
+          <div style="margin-bottom: 6px;">Search products</div>
+          <input id="search-input" class="search-input" placeholder="Type to filter…" />
         </div>
         
         <h2>Shop ZipMetro</h2>
@@ -2317,53 +2352,31 @@
         <p class="text-muted" style="margin-bottom: var(--space-xl); font-size: 16px; line-height: 1.6;">This is a front-end-only admin stub. In production this would be behind auth and wired to your backend.</p>
 
         <div class="stack">
-          <div class="two-col">
-            <div class="card">
-              <h3>High-level metrics (mock)</h3>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Today</th>
-                    <th>7-day</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Orders</td>
-                    <td>18</td>
-                    <td>122</td>
-                  </tr>
-                  <tr>
-                    <td>GMV</td>
-                    <td>$2,340</td>
-                    <td>$14,920</td>
-                  </tr>
-                  <tr>
-                    <td>Avg basket</td>
-                    <td>$130</td>
-                    <td>$122</td>
-                  </tr>
-                  <tr>
-                    <td>Repeat customers</td>
-                    <td>62%</td>
-                    <td>58%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="card">
-              <h3>Advertising slot (homepage banner)</h3>
-              <div class="stack">
-                <label for="admin-ad-text">Banner copy</label>
-                <textarea id="admin-ad-text" placeholder="e.g. Mix & Match quarters · Any 4 for $99."></textarea>
-                <button class="btn btn-primary" id="save-ad-btn">Save ad</button>
-                <div class="notice">
-                  This feeds the “Featured Deal” unit in the left sidebar on all customer views.
-                </div>
-                <div id="admin-ad-status" class="text-muted"></div>
+          <div class="card">
+            <h3>Carousel Banner Management</h3>
+            <div class="stack" style="gap: var(--space-xl);">
+              <div id="carousel-slides-admin">
+                <!-- Slides will be dynamically added here -->
               </div>
+              <button class="btn btn-outline" id="add-carousel-slide-btn" style="width: 100%;">Add New Slide</button>
+              <button class="btn btn-primary" id="save-carousel-btn" style="width: 100%;">Save Carousel Banners</button>
+              <div id="carousel-status" class="text-muted"></div>
+              <div class="notice">
+                Upload images and set content for the carousel banners displayed above products. You can add up to 5 slides.
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Advertising slot (homepage banner)</h3>
+            <div class="stack">
+              <label for="admin-ad-text">Banner copy</label>
+              <textarea id="admin-ad-text" placeholder="e.g. Mix & Match quarters · Any 4 for $99."></textarea>
+              <button class="btn btn-primary" id="save-ad-btn">Save ad</button>
+              <div class="notice">
+                This feeds the “Featured Deal” unit in the left sidebar on all customer views.
+              </div>
+              <div id="admin-ad-status" class="text-muted"></div>
             </div>
           </div>
 
@@ -2880,8 +2893,9 @@
         `;
         grid.parentNode.insertBefore(carousel, grid);
 
-        // sample slides (image, title, subtitle, cta)
-        const slides = [
+        // Load slides from localStorage or use defaults
+        const savedSlides = JSON.parse(localStorage.getItem('carouselSlides') || '[]');
+        const slides = savedSlides.length > 0 ? savedSlides : [
           { img: 'https://picsum.photos/seed/promo1/1200/420', title: 'Weekend Special', subtitle: '20% off selected strains · Code WEEKEND', cta: 'Shop deals' },
           { img: 'https://picsum.photos/seed/promo2/1200/420', title: 'Free Delivery', subtitle: 'Free delivery over $75 this week only', cta: 'Learn more' },
           { img: 'https://picsum.photos/seed/promo3/1200/420', title: 'New Arrivals', subtitle: 'Fresh live rosin and new gummies', cta: 'Browse new' }
@@ -3318,6 +3332,160 @@
       status.textContent = "Ad updated for customer view.";
     });
 
+    // Carousel Banner Management
+    let carouselSlides = JSON.parse(localStorage.getItem('carouselSlides') || '[]');
+    if (carouselSlides.length === 0) {
+      // Default slides
+      carouselSlides = [
+        { img: 'https://picsum.photos/seed/promo1/1200/420', title: 'Weekend Special', subtitle: '20% off selected strains · Code WEEKEND', cta: 'Shop deals' },
+        { img: 'https://picsum.photos/seed/promo2/1200/420', title: 'Free Delivery', subtitle: 'Free delivery over $75 this week only', cta: 'Learn more' },
+        { img: 'https://picsum.photos/seed/promo3/1200/420', title: 'New Arrivals', subtitle: 'Fresh live rosin and new gummies', cta: 'Browse new' }
+      ];
+    }
+
+    function renderCarouselAdmin() {
+      const container = document.getElementById('carousel-slides-admin');
+      container.innerHTML = '';
+      
+      carouselSlides.forEach((slide, index) => {
+        const slideDiv = document.createElement('div');
+        slideDiv.className = 'carousel-slide-admin';
+        slideDiv.innerHTML = `
+          <div class="carousel-slide-admin-header">
+            <div class="carousel-slide-admin-title">Slide ${index + 1}</div>
+            <button class="btn btn-outline" onclick="removeCarouselSlide(${index})" style="padding: var(--space-xs) var(--space-sm); font-size: 12px;">Remove</button>
+          </div>
+          <div class="carousel-slide-admin-preview">
+            <img src="${slide.img}" alt="Preview" id="carousel-preview-${index}" />
+          </div>
+          <div class="form-group">
+            <label>Upload Image</label>
+            <input type="file" accept="image/*" class="carousel-image-file" data-index="${index}" style="width: 100%; padding: var(--space-sm);" />
+          </div>
+          <div class="form-group">
+            <label>Or Enter Image URL</label>
+            <input type="text" class="carousel-image-url" data-index="${index}" value="${slide.img}" placeholder="Image URL" style="width: 100%;" />
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="carousel-title" data-index="${index}" value="${slide.title || ''}" placeholder="Slide title" style="width: 100%;" />
+          </div>
+          <div class="form-group">
+            <label>Subtitle</label>
+            <input type="text" class="carousel-subtitle" data-index="${index}" value="${slide.subtitle || ''}" placeholder="Slide subtitle" style="width: 100%;" />
+          </div>
+          <div class="form-group">
+            <label>CTA Button Text</label>
+            <input type="text" class="carousel-cta" data-index="${index}" value="${slide.cta || ''}" placeholder="Button text" style="width: 100%;" />
+          </div>
+        `;
+        container.appendChild(slideDiv);
+
+        // Add event listeners for this slide
+        const fileInput = slideDiv.querySelector('.carousel-image-file');
+        const urlInput = slideDiv.querySelector('.carousel-image-url');
+        const titleInput = slideDiv.querySelector('.carousel-title');
+        const subtitleInput = slideDiv.querySelector('.carousel-subtitle');
+        const ctaInput = slideDiv.querySelector('.carousel-cta');
+
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            await uploadCarouselImage(file, index);
+          }
+        });
+
+        urlInput.addEventListener('input', (e) => {
+          carouselSlides[index].img = e.target.value;
+          document.getElementById(`carousel-preview-${index}`).src = e.target.value;
+        });
+
+        titleInput.addEventListener('input', (e) => {
+          carouselSlides[index].title = e.target.value;
+        });
+
+        subtitleInput.addEventListener('input', (e) => {
+          carouselSlides[index].subtitle = e.target.value;
+        });
+
+        ctaInput.addEventListener('input', (e) => {
+          carouselSlides[index].cta = e.target.value;
+        });
+      });
+    }
+
+    async function uploadCarouselImage(file, index) {
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert('Admin access required');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const token = localStorage.getItem('authToken');
+        const uploadRes = await fetch('/api/upload/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData,
+          credentials: 'include'
+        });
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          carouselSlides[index].img = uploadData.url;
+          document.getElementById(`carousel-preview-${index}`).src = uploadData.url;
+          document.querySelector(`.carousel-image-url[data-index="${index}"]`).value = uploadData.url;
+          showToast('Image uploaded successfully!', 'OK');
+        } else {
+          const uploadError = await uploadRes.json().catch(() => ({ error: 'Upload failed' }));
+          alert('Image upload failed: ' + (uploadError.error || 'Unknown error'));
+        }
+      } catch (error) {
+        alert('Error uploading image: ' + error.message);
+      }
+    }
+
+    window.removeCarouselSlide = function(index) {
+      if (confirm('Remove this slide?')) {
+        carouselSlides.splice(index, 1);
+        renderCarouselAdmin();
+      }
+    };
+
+    document.getElementById('add-carousel-slide-btn').addEventListener('click', () => {
+      if (carouselSlides.length >= 5) {
+        alert('Maximum 5 slides allowed');
+        return;
+      }
+      carouselSlides.push({
+        img: 'https://picsum.photos/seed/promo' + (carouselSlides.length + 1) + '/1200/420',
+        title: 'New Slide',
+        subtitle: 'Enter subtitle here',
+        cta: 'Learn more'
+      });
+      renderCarouselAdmin();
+    });
+
+    document.getElementById('save-carousel-btn').addEventListener('click', () => {
+      localStorage.setItem('carouselSlides', JSON.stringify(carouselSlides));
+      document.getElementById('carousel-status').textContent = 'Carousel banners saved! Changes will appear on next page load.';
+      document.getElementById('carousel-status').style.color = 'var(--text-primary)';
+      showToast('Carousel banners saved!', 'OK');
+    });
+
+    // Render carousel admin when admin section is shown
+    const originalSwitchSection = switchSection;
+    window.switchSection = function(id) {
+      if (id === 'admin-section') {
+        renderCarouselAdmin();
+      }
+      originalSwitchSection(id);
+    };
+
     // Image preview functionality
     const imageFileInput = document.getElementById('admin-new-image-file');
     const imageUrlInput = document.getElementById('admin-new-image-url');
@@ -3583,6 +3751,10 @@
     // Initialize tabs and notification toggles
     initTabs();
     initNotificationToggles();
+    // Initialize carousel admin if admin section is active
+    if (document.getElementById('admin-section')?.classList.contains('active')) {
+      renderCarouselAdmin();
+    }
     // accessibility: focus main when skip-link used
     document.querySelector('.skip-link').addEventListener('click', (e)=>{
       const m = document.getElementById('main-content');
