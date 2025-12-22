@@ -477,31 +477,7 @@
     .search-input::placeholder {
       color: var(--text-muted);
     }
-    /* Standardized Ad Block */
-    .ad-block {
-      margin-top: var(--space-xl);
-      padding: var(--space-lg);
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(184,62,191,0.15), rgba(161,46,184,0.12));
-      border: 1px solid rgba(184,62,191,0.3);
-      color: var(--text-primary);
-      font-size: 14px;
-      box-shadow: var(--shadow-sm);
-    }
-    .ad-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: var(--space-xs);
-    }
-    .ad-content {
-      margin-top: var(--space-xs);
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-secondary);
-    }
+    /* Featured Deal ad-block removed */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -1940,6 +1916,206 @@
       .form-row .form-group {
         margin-bottom: var(--space-lg);
       }
+      
+      /* Account & ID Section Mobile Improvements */
+      #account-section .card {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+      }
+      
+      #account-section .tab-header {
+        gap: var(--space-xs);
+        padding: 0;
+        margin-bottom: var(--space-lg);
+      }
+      
+      #account-section .tab-button {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 13px;
+        min-height: 44px;
+        flex: 1;
+        white-space: nowrap;
+      }
+      
+      #account-section .form-group {
+        margin-bottom: var(--space-lg);
+      }
+      
+      #account-section .form-group input,
+      #account-section .form-group select,
+      #account-section .form-group textarea {
+        min-height: 48px;
+        font-size: 16px;
+        padding: var(--space-md) var(--space-lg);
+      }
+      
+      #account-section .btn {
+        min-height: 52px;
+        font-size: 16px;
+        width: 100%;
+      }
+      
+      #account-section .toggle-item {
+        padding: var(--space-md);
+        min-height: 60px;
+      }
+      
+      /* Admin Section Mobile Improvements */
+      #admin-section .card {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+      }
+      
+      #admin-section h2 {
+        font-size: 24px;
+        margin-bottom: var(--space-md);
+      }
+      
+      #admin-section .text-muted {
+        font-size: 14px;
+        margin-bottom: var(--space-lg);
+      }
+      
+      #admin-section .stack {
+        gap: var(--space-lg);
+      }
+      
+      #admin-section input,
+      #admin-section select,
+      #admin-section textarea {
+        min-height: 48px;
+        font-size: 16px;
+        padding: var(--space-md) var(--space-lg);
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      #admin-section label {
+        font-size: 14px;
+        margin-bottom: var(--space-xs);
+        display: block;
+        font-weight: 600;
+      }
+      
+      #admin-section .btn {
+        min-height: 52px;
+        font-size: 16px;
+        width: 100%;
+        margin-top: var(--space-md);
+      }
+      
+      /* Admin form rows stack on mobile */
+      #admin-section [style*="display:flex"] {
+        flex-direction: column !important;
+        gap: var(--space-md) !important;
+      }
+      
+      #admin-section [style*="display:flex"] > * {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+      }
+      
+      /* Override inline styles for mobile */
+      #admin-section input[style*="min-width"],
+      #admin-section input[style*="width:100px"] {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+      
+      /* Carousel admin inputs */
+      #admin-section .carousel-image-file,
+      #admin-section .carousel-image-url,
+      #admin-section .carousel-title,
+      #admin-section .carousel-subtitle,
+      #admin-section .carousel-cta {
+        width: 100% !important;
+        min-height: 48px;
+        font-size: 16px;
+        padding: var(--space-md) var(--space-lg);
+      }
+      
+      /* Consistent card styling */
+      #account-section .card h3,
+      #admin-section .card h3 {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: var(--space-lg);
+        color: var(--text-primary);
+      }
+      
+      /* Consistent notice styling */
+      #account-section .notice,
+      #admin-section .notice {
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: var(--space-lg);
+      }
+      
+      /* Consistent status text */
+      #account-section .text-muted,
+      #admin-section .text-muted {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: var(--space-sm);
+      }
+      
+      /* Admin table scrollable on mobile */
+      #admin-section .table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 13px;
+      }
+      
+      #admin-section .table thead,
+      #admin-section .table tbody,
+      #admin-section .table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+      }
+      
+      #admin-section .table th,
+      #admin-section .table td {
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 12px;
+        word-wrap: break-word;
+      }
+      
+      #admin-section .table th:first-child,
+      #admin-section .table td:first-child {
+        min-width: 120px;
+      }
+      
+      #admin-section .table th:last-child,
+      #admin-section .table td:last-child {
+        width: 80px;
+      }
+      
+      /* Image preview responsive */
+      #admin-section #image-preview {
+        margin-top: var(--space-md);
+      }
+      
+      #admin-section #preview-img {
+        max-width: 100%;
+        height: auto;
+      }
+      
+      /* Carousel admin mobile */
+      #admin-section #carousel-slides-admin {
+        gap: var(--space-lg);
+      }
+      
+      #admin-section #carousel-slides-admin .card {
+        padding: var(--space-md);
+      }
+      
       .toggle-item {
         flex-direction: column;
         align-items: flex-start;
@@ -2951,14 +3127,6 @@
   </header>
 
   <div class="layout">
-    <aside>
-      <div class="ad-block" id="ad-block">
-        <div class="ad-title">Featured Deal</div>
-        <div class="ad-content" id="ad-content">
-          25% off first order · Free delivery over $100.
-        </div>
-      </div>
-    </aside>
 
     <main id="main-content">
       <!-- SHOP SECTION -->
@@ -3333,19 +3501,6 @@
               <div class="notice">
                 Upload images and set content for the carousel banners displayed above products. You can add up to 5 slides.
               </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>Advertising slot (homepage banner)</h3>
-            <div class="stack">
-              <label for="admin-ad-text">Banner copy</label>
-              <textarea id="admin-ad-text" placeholder="e.g. Mix & Match quarters · Any 4 for $99."></textarea>
-              <button class="btn btn-primary" id="save-ad-btn">Save ad</button>
-              <div class="notice">
-                This feeds the “Featured Deal” unit in the left sidebar on all customer views.
-              </div>
-              <div id="admin-ad-status" class="text-muted"></div>
             </div>
           </div>
 
@@ -4296,17 +4451,7 @@
       statusEl.textContent = `ID submitted for ${first} ${last} (demo only, not uploaded anywhere).`;
     });
 
-    document.getElementById("save-ad-btn").addEventListener("click", () => {
-      const text = document.getElementById("admin-ad-text").value.trim();
-      const adContent = document.getElementById("ad-content");
-      const status = document.getElementById("admin-ad-status");
-      if (!text) {
-        alert("Enter some ad copy.");
-        return;
-      }
-      adContent.textContent = text;
-      status.textContent = "Ad updated for customer view.";
-    });
+    // Featured Deal admin removed
 
     // Carousel Banner Management
     let carouselSlides = JSON.parse(localStorage.getItem('carouselSlides') || '[]');
