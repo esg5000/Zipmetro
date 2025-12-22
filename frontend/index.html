@@ -994,9 +994,8 @@
         bottom: var(--space-sm);
       }
       
-      body {
-        padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); /* Space for mobile bar + safe area */
-      }
+      /* Remove old mobile-bar padding - AppFooter handles its own spacing */
+      /* body padding-bottom removed - handled by main#main-content padding-bottom */
       
       #mobile-bar{ 
         display: flex; 
@@ -2667,27 +2666,48 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 56px;
+      width: 100%;
       background: var(--bg-secondary);
       border-top: 1px solid var(--border-light);
       z-index: 1000;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+      /* Safe area support - add padding at bottom for iOS notch/home indicator */
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      /* Ensure it doesn't stretch vertically */
+      height: auto;
+      min-height: auto;
+      max-height: none;
+      /* Remove any flex properties that might cause stretching */
+      flex: none;
+      align-self: auto;
+    }
+
+    @media (min-width: 768px) {
+      .app-footer {
+        display: none !important;
+      }
     }
 
     @media (max-width: 767px) {
       .app-footer {
-        display: flex;
+        display: block !important;
       }
     }
 
     .app-footer nav {
       display: flex;
+      flex-direction: row;
       width: 100%;
-      height: 100%;
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
       align-items: center;
       justify-content: space-around;
       padding: 0 var(--space-sm);
+      flex-wrap: nowrap;
+      gap: 0;
+      margin: 0;
+      box-sizing: border-box;
     }
 
     .app-footer-link {
@@ -2696,8 +2716,10 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      flex: 1;
-      min-height: 56px;
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 44px;
+      max-height: 56px;
       padding: var(--space-xs) var(--space-sm);
       background: transparent;
       border: none;
@@ -2710,6 +2732,8 @@
       border-radius: var(--radius-sm);
       position: relative;
       -webkit-tap-highlight-color: rgba(184, 62, 191, 0.2);
+      /* Prevent stretching */
+      align-self: center;
     }
 
     .app-footer-link:focus-visible {
@@ -2768,6 +2792,11 @@
 
       .layout {
         padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + var(--space-lg));
+      }
+      
+      /* Ensure body doesn't stretch AppFooter */
+      body {
+        display: block;
       }
     }
 
@@ -3015,9 +3044,6 @@
           <div style="margin-bottom: 6px;">Search products</div>
           <input id="search-input" class="search-input" placeholder="Type to filter…" />
         </div>
-        
-        <h2>Shop ZipMetro</h2>
-        <p class="text-muted" style="margin-bottom: var(--space-xl); font-size: 16px; line-height: 1.6;">Browse by category, add to cart, and check out when you're ready. Mapping, ID, and notifications are handled at checkout.</p>
         
         <!-- Trust Signals -->
         <div class="trust-signals">
