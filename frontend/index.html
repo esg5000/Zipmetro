@@ -1844,38 +1844,21 @@
         min-height: calc(64px + env(safe-area-inset-top, 0px));
       }
       
-      .nav-toggle{ 
-        display: inline-flex; 
-        background: transparent;
-        border: 1px solid var(--border-light);
-        color: var(--text-primary);
-        min-width: 44px;
-        min-height: 44px;
-        touch-action: manipulation;
-      }
+      /* Nav toggle removed - nav is always visible */
       
       nav{ 
-        position: absolute; 
-        left: 0;
-        right: 0;
-        top: 100%; 
-        display: none; 
-        flex-direction: column; 
-        background: #0F0F0F; 
-        padding: var(--space-md); 
-        padding-top: max(var(--space-md), env(safe-area-inset-top, 0px));
-        border-bottom: 1px solid var(--border-light);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        gap: var(--space-xs);
-        align-items: stretch;
-        max-height: calc(100dvh - 64px - env(safe-area-inset-top, 0px));
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-      
-      nav.open{ 
+        position: static; 
         display: flex; 
-        animation: navFade .2s ease; 
+        flex-direction: row; 
+        background: transparent; 
+        padding: 0; 
+        border-bottom: none;
+        box-shadow: none;
+        gap: var(--space-sm);
+        align-items: center;
+        justify-content: center;
+        max-height: none;
+        overflow-y: visible;
       }
       
       @keyframes navFade{ 
@@ -1994,50 +1977,23 @@
       }
       
       /* Improve navigation dropdown menu */
-      nav {
-        position: fixed !important;
-        top: calc(64px + env(safe-area-inset-top, 0px)) !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: var(--space-md) !important;
-        gap: var(--space-xs) !important;
-        z-index: 9999;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      }
+      /* Nav is always visible in header - no fixed positioning needed */
       
       .nav-btn {
-        width: 100% !important;
-        min-height: 52px !important;
-        padding: var(--space-md) var(--space-lg) !important;
-        font-size: 16px !important;
+        width: auto !important;
+        min-height: 44px !important;
+        padding: var(--space-sm) var(--space-md) !important;
+        font-size: 14px !important;
         font-weight: 500;
         border-radius: var(--radius-md);
-        justify-content: flex-start;
-        text-align: left;
-        gap: var(--space-md);
+        justify-content: center;
+        text-align: center;
+        gap: var(--space-xs);
         touch-action: manipulation;
         -webkit-tap-highlight-color: rgba(184, 62, 191, 0.2);
       }
       
-      /* Add backdrop overlay for mobile menu */
-      nav.open::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9998;
-        animation: fadeIn 0.2s ease;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
+      /* Backdrop overlay removed - nav is always visible */
       
       /* Fix login form section on mobile */
       #login-register-section .row {
@@ -2973,13 +2929,6 @@
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <header>
-    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Toggle menu">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
-        <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
-        <rect x="3" y="16" width="12" height="2" rx="1" fill="currentColor" />
-      </svg>
-    </button>
     <a href="/" class="brand-link">
       <img class="brand-logo" src="assets/ZipMetroLogoRemoveBG (1).png" alt="ZipMetro" />
     </a>
@@ -2990,12 +2939,6 @@
       <button class="nav-btn" data-section="admin-section">Admin</button>
     </nav>
     <div class="header-right">
-      <button class="cart-icon-btn" id="cart-icon-btn" onclick="openMiniCart()" aria-label="Open shopping cart">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 17.9 19 19 19C20.1 19 21 18.1 21 17V13M9 19.5C9.8 19.5 10.5 20.2 10.5 21C10.5 21.8 9.8 22.5 9 22.5C8.2 22.5 7.5 21.8 7.5 21C7.5 20.2 8.2 19.5 9 19.5ZM20 19.5C20.8 19.5 21.5 20.2 21.5 21C21.5 21.8 20.8 22.5 20 22.5C19.2 22.5 18.5 21.8 18.5 21C18.5 20.2 19.2 19.5 20 19.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="cart-badge" id="cart-badge">0</span>
-      </button>
       <div class="cart-indicator">
         Cart: <span id="cart-count">0</span> items
       </div>
@@ -3045,29 +2988,6 @@
           <input id="search-input" class="search-input" placeholder="Type to filter…" />
         </div>
         
-        <!-- Trust Signals -->
-        <div class="trust-signals">
-          <h3>Why Choose ZipMetro?</h3>
-          <div class="trust-badges">
-            <div class="trust-badge">
-              <span>✓</span>
-              <span>21+ Licensed Delivery</span>
-            </div>
-            <div class="trust-badge">
-              <span>✓</span>
-              <span>Secure Checkout</span>
-            </div>
-            <div class="trust-badge">
-              <span>✓</span>
-              <span>Same-Day Delivery</span>
-            </div>
-            <div class="trust-badge">
-              <span>✓</span>
-              <span>Age-Verified</span>
-            </div>
-          </div>
-        </div>
-
         <div class="products-grid" id="products-grid"></div>
 
         <!-- Reviews Section -->
@@ -3643,28 +3563,7 @@
   </button>
 
   <script>
-    // Mobile nav toggle
-    (function(){
-      const navToggle = document.querySelector('.nav-toggle');
-      const nav = document.getElementById('site-nav');
-      if(navToggle && nav){
-        navToggle.addEventListener('click', ()=>{
-          const open = nav.classList.toggle('open');
-          navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-        // close nav after selecting
-        nav.querySelectorAll('.nav-btn').forEach(b=> b.addEventListener('click', ()=>{
-          nav.classList.remove('open');
-          navToggle.setAttribute('aria-expanded','false');
-        }));
-        // close nav if focus leaves (small helper)
-        document.addEventListener('click', (e)=>{
-          if(!nav.contains(e.target) && !navToggle.contains(e.target)){
-            nav.classList.remove('open'); navToggle.setAttribute('aria-expanded','false');
-          }
-        });
-      }
-    })();
+    // Mobile nav toggle removed - nav is always visible
 
     // Toast micro-interaction: shows a small dismissible notification
     function showToast(message, actionLabel, actionCallback, timeout = 4500){
@@ -3930,8 +3829,6 @@
       document.getElementById("cart-count").textContent = count;
       const mobile = document.getElementById('mobile-cart-count');
       if(mobile) mobile.textContent = count;
-      const badge = document.getElementById('cart-badge');
-      if(badge) badge.textContent = count;
     }
 
     function renderProducts() {
