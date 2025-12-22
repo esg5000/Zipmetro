@@ -3112,7 +3112,7 @@
       <button class="nav-btn active" data-section="shop-section">Shop</button>
       <button class="nav-btn" data-section="cart-section">Cart</button>
       <button class="nav-btn" data-section="account-section">Account & ID</button>
-      <button class="nav-btn" data-section="admin-section">Admin</button>
+      <button class="nav-btn" data-section="admin-section" id="admin-nav-btn" style="display: none;">Admin</button>
     </nav>
     <div class="header-right">
       <div class="cart-indicator">
@@ -3325,6 +3325,19 @@
 
           <!-- Account Tab Content -->
           <div id="account-tab" class="tab-content active">
+            <!-- Admin Link (only visible to admins) -->
+            <div id="admin-account-link" style="display: none; margin-bottom: var(--space-lg);">
+              <div class="card">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div>
+                    <h3 style="margin: 0 0 var(--space-xs) 0;">Admin Panel</h3>
+                    <p class="text-muted" style="margin: 0; font-size: 14px;">Manage products, carousel, and settings</p>
+                  </div>
+                  <button class="btn btn-primary" onclick="switchSection('admin-section')">Go to Admin</button>
+                </div>
+              </div>
+            </div>
+            
             <div class="card">
               <h3>Login / Register</h3>
               
@@ -3840,6 +3853,8 @@
       const loginBtn = document.getElementById('login-toggle-btn');
       const userEmail = document.getElementById('user-email');
       const loginSection = document.getElementById('login-register-section');
+      const adminNavBtn = document.getElementById('admin-nav-btn');
+      const adminAccountLink = document.getElementById('admin-account-link');
       
       if (currentUser) {
         userStatus.style.display = 'flex';
@@ -3848,12 +3863,24 @@
         if (loginSection) {
           loginSection.style.display = 'none';
         }
+        
+        // Show/hide admin navigation based on role
+        if (currentUser.role === 'admin') {
+          if (adminNavBtn) adminNavBtn.style.display = 'inline-flex';
+          if (adminAccountLink) adminAccountLink.style.display = 'block';
+        } else {
+          if (adminNavBtn) adminNavBtn.style.display = 'none';
+          if (adminAccountLink) adminAccountLink.style.display = 'none';
+        }
       } else {
         userStatus.style.display = 'none';
         loginBtn.style.display = 'inline-flex';
         if (loginSection) {
           loginSection.style.display = 'block';
         }
+        // Hide admin elements when logged out
+        if (adminNavBtn) adminNavBtn.style.display = 'none';
+        if (adminAccountLink) adminAccountLink.style.display = 'none';
       }
     }
 
@@ -3880,6 +3907,11 @@
           statusEl.style.color = 'var(--primary)';
           document.getElementById('login-email').value = '';
           document.getElementById('login-password').value = '';
+          // If user was trying to access admin, redirect them if not admin
+          const activeSection = document.querySelector('.section.active');
+          if (activeSection && activeSection.id === 'admin-section' && currentUser.role !== 'admin') {
+            switchSection('shop-section');
+          }
           return true;
         } else {
           let errorMessage = 'Unknown error';
@@ -4601,7 +4633,18 @@
     // Render carousel admin when admin section is shown
     const originalSwitchSection = switchSection;
     window.switchSection = function(id) {
+      // Protect admin section - require authentication and admin role
       if (id === 'admin-section') {
+        if (!currentUser) {
+          alert('Please log in to access the admin panel.');
+          switchSection('account-section');
+          return;
+        }
+        if (currentUser.role !== 'admin') {
+          alert('Admin access required. You do not have permission to access this section.');
+          switchSection('shop-section');
+          return;
+        }
         renderCarouselAdmin();
       }
       if (id === 'cart-section') {

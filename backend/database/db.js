@@ -549,7 +549,7 @@ if (USE_MONGODB) {
         dob DATE,
         id_verified BOOLEAN DEFAULT 0,
         id_image_path TEXT,
-        role TEXT DEFAULT 'customer',
+        role TEXT DEFAULT 'user',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )

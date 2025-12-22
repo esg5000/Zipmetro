@@ -38,9 +38,9 @@ router.post('/register', async (req, res, next) => {
     // Ensure ID is a string for JWT (handles MongoDB ObjectId)
     const userId = result.lastID && result.lastID.toString ? result.lastID.toString() : result.lastID;
 
-    // Generate token
+    // Generate token (default role is 'user')
     const token = jwt.sign(
-      { id: userId, email, role: 'customer' },
+      { id: userId, email, role: 'user' },
       process.env.JWT_SECRET || 'your-secret-key-change-in-production',
       { expiresIn: '7d' }
     );
@@ -52,7 +52,7 @@ router.post('/register', async (req, res, next) => {
         email,
         first_name,
         last_name,
-        role: 'customer'
+        role: 'user'
       }
     });
   } catch (error) {
