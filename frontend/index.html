@@ -3000,7 +3000,7 @@
 
     /* BottomNav - Mobile-only bottom navigation bar */
     .app-footer {
-      display: flex; /* Show on mobile by default */
+      display: flex !important; /* Show on mobile by default */
       position: fixed;
       bottom: 0;
       left: 0;
@@ -3012,13 +3012,20 @@
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
       /* Safe area support - add padding at bottom for iOS notch/home indicator */
       padding-bottom: env(safe-area-inset-bottom, 0px);
-      /* Ensure it doesn't stretch vertically */
+      /* Ensure minimum height for visibility */
+      min-height: 56px;
       height: auto;
-      min-height: auto;
       max-height: none;
       /* Remove any flex properties that might cause stretching */
       flex: none;
       align-self: auto;
+    }
+    
+    /* Ensure app-footer is visible on mobile */
+    @media (max-width: 767px) {
+      .app-footer {
+        display: flex !important;
+      }
     }
 
     /* Hide BottomNav on desktop (>=768px) */
@@ -3029,7 +3036,7 @@
     }
 
     .app-footer nav {
-      display: flex;
+      display: flex !important;
       flex-direction: row;
       width: 100%;
       height: 56px;
@@ -3108,7 +3115,8 @@
     .app-footer-icon svg {
       width: 100%;
       height: 100%;
-      fill: currentColor;
+      stroke: currentColor;
+      fill: none;
     }
 
     .app-footer-label {
