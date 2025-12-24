@@ -82,6 +82,7 @@
       -webkit-text-size-adjust:100%; 
       font-size:16px;
       scroll-behavior: smooth;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
     body {
       margin: 0;
@@ -91,6 +92,19 @@
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
       line-height: 1.6;
+      overflow-x: hidden; /* Prevent horizontal scroll at root */
+      width: 100%;
+      max-width: 100vw;
+    }
+    
+    /* AppShell - Global Layout Container */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
     .skip-link{
       position: absolute;
@@ -112,10 +126,11 @@
       z-index: 9999;
       font-weight: 600;
     }
+    /* Header - Desktop only (hidden on mobile) */
     header {
       background: #0F0F0F;
-      padding: var(--space-md) var(--space-lg); /* px-4 py-4 */
-      display: flex;
+      padding: var(--space-md) var(--space-lg);
+      display: none; /* Hidden by default (mobile) */
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-light);
@@ -125,6 +140,15 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       height: 72px;
       min-height: 72px;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    
+    @media (min-width: 768px) {
+      header {
+        display: flex; /* Show on desktop */
+      }
     }
     .brand {
       display: flex;
@@ -172,11 +196,18 @@
       display: none;
     }
     
-    /* Hide header logo - keep only hero banner logo */
-    @media (max-width: 800px) {
+    /* Show header logo on desktop, hide on mobile */
+    @media (max-width: 767px) {
       .brand-logo,
       .brand-link {
         display: none !important;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .brand-logo,
+      .brand-link {
+        display: block !important;
       }
     }
     .brand-title {
@@ -196,13 +227,20 @@
       margin-top: 2px;
       font-weight: 400;
     }
+    /* TopNav - Desktop only (>=768px) */
     nav {
-      display: flex;
+      display: none; /* Hidden by default (mobile) */
       gap: var(--space-md);
       align-items: center;
       flex: 1;
       justify-content: center;
       padding: 0 var(--space-lg);
+    }
+    
+    @media (min-width: 768px) {
+      nav {
+        display: flex; /* Show on desktop */
+      }
     }
     /* Standardized Nav Toggle */
     .nav-toggle{
@@ -295,25 +333,53 @@
       border-radius: var(--radius-md);
       flex-shrink: 0;
     }
-    .layout {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      min-height: calc(100dvh - 72px);
-      max-width: var(--max-width);
+    /* PageContainer - consistent max-width and padding for all pages */
+    .page-container {
+      max-width: 1152px; /* max-w-6xl equivalent (1152px) */
       margin: 0 auto;
-      gap: var(--space-xl);
-      padding: var(--space-xl) var(--space-lg);
-      align-items: start;
-      /* Safe area insets */
-      padding-left: max(var(--space-lg), env(safe-area-inset-left, 0px));
-      padding-right: max(var(--space-lg), env(safe-area-inset-right, 0px));
-      /* Safe area insets */
-      padding-left: max(var(--space-lg), env(safe-area-inset-left));
-      padding-right: max(var(--space-lg), env(safe-area-inset-right));
-    }
-    main{ 
-      padding: 0;
+      padding: 0 var(--space-md); /* px-4 */
       width: 100%;
+      box-sizing: border-box;
+    }
+    
+    @media (min-width: 768px) {
+      .page-container {
+        padding: 0 var(--space-lg); /* md:px-6 */
+      }
+    }
+    
+    /* Layout wrapper - removed, using PageContainer directly */
+    .layout {
+      display: block;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    
+    /* Main content area - AppShell main */
+    main#main-content {
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 0;
+      overflow-x: hidden;
+      /* Add padding-bottom on mobile to prevent content being covered by bottom nav */
+      padding-bottom: 0;
+      flex: 1; /* Take remaining space in AppShell */
+    }
+    
+    /* Mobile: Add padding-bottom for fixed bottom nav */
+    @media (max-width: 767px) {
+      main#main-content {
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); /* pb-20 equivalent */
+      }
+    }
+    
+    /* Desktop: No bottom padding needed */
+    @media (min-width: 768px) {
+      main#main-content {
+        padding-bottom: 0; /* md:pb-0 */
+      }
     }
     aside {
       background: var(--surface);
@@ -329,61 +395,90 @@
     main {
       padding: 0;
     }
+    /* Responsive Typography */
     h1 {
       margin-top: 0;
       margin-bottom: var(--space-lg);
       font-family: var(--font-graffiti);
-      font-size: 42px;
-      font-weight: 400;
-      color: var(--text-primary);
-      letter-spacing: 0.02em;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
-    h2 {
-      margin-top: 0;
-      margin-bottom: var(--space-md);
-      font-family: var(--font-graffiti);
-      font-size: 32px;
+      font-size: clamp(24px, 5vw, 36px); /* text-2xl md:text-4xl equivalent */
       font-weight: 400;
       color: var(--text-primary);
       letter-spacing: 0.02em;
       line-height: 1.2;
       text-transform: uppercase;
     }
+    
+    @media (min-width: 768px) {
+      h1 {
+        font-size: clamp(32px, 4vw, 42px); /* md:text-4xl */
+      }
+    }
+    
+    h2 {
+      margin-top: 0;
+      margin-bottom: var(--space-md);
+      font-family: var(--font-graffiti);
+      font-size: clamp(20px, 4vw, 28px); /* text-xl md:text-3xl */
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+    
+    @media (min-width: 768px) {
+      h2 {
+        font-size: clamp(28px, 3.5vw, 32px); /* md:text-3xl */
+      }
+    }
+    
     h3 {
       margin-top: 0;
       margin-bottom: var(--space-md);
       font-family: var(--font-graffiti);
-      font-size: 22px;
+      font-size: clamp(18px, 3vw, 22px); /* text-lg md:text-2xl */
       font-weight: 400;
       color: var(--text-primary);
       letter-spacing: 0.01em;
+      line-height: 1.4;
       text-transform: uppercase;
     }
+    
+    @media (min-width: 768px) {
+      h3 {
+        font-size: clamp(20px, 2.5vw, 24px); /* md:text-2xl */
+      }
+    }
+    
     h4 {
       margin-top: 0;
       margin-bottom: var(--space-sm);
       font-family: var(--font-graffiti);
-      font-size: 18px;
+      font-size: clamp(16px, 2.5vw, 18px); /* text-base md:text-lg */
       font-weight: 400;
       color: var(--text-primary);
       letter-spacing: 0.01em;
+      line-height: 1.5;
       text-transform: uppercase;
+    }
+    
+    @media (min-width: 768px) {
+      h4 {
+        font-size: 18px; /* md:text-lg */
+      }
     }
     .section {
       display: none;
       width: 100%;
+      max-width: 100vw;
       box-sizing: border-box;
+      overflow-x: hidden; /* Prevent horizontal overflow */
     }
     .section.active {
       display: block;
       animation: fadeIn 0.3s ease;
     }
-    main#main-content {
-      width: 100%;
-      box-sizing: border-box;
-    }
+    /* Removed duplicate - handled above */
     #shop-section {
       width: 100%;
       box-sizing: border-box;
@@ -408,6 +503,9 @@
     }
     .category-list-container {
       margin-bottom: var(--space-xl); /* mb-6 spacing after tabs */
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden; /* Prevent overflow */
     }
     .category-list::-webkit-scrollbar {
       display: none; /* Chrome, Safari, Opera */
@@ -478,11 +576,28 @@
       color: var(--text-muted);
     }
     /* Featured Deal ad-block removed */
+    /* Products Grid - Responsive Grid Layout */
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: var(--space-lg);
+      grid-template-columns: repeat(2, 1fr); /* grid-cols-2 */
+      gap: var(--space-md); /* gap-4 */
       margin-top: var(--space-lg);
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    
+    @media (min-width: 768px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+        gap: var(--space-lg);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .products-grid {
+        grid-template-columns: repeat(4, 1fr); /* lg:grid-cols-4 */
+      }
     }
 
     /* Hero banner / promo above products */
@@ -530,18 +645,26 @@
       padding: 30px 28px 25px 28px;
       margin-bottom: var(--space-xl);
       position: relative;
-      overflow: hidden;
+      overflow: hidden; /* Prevent overflow */
       box-shadow: var(--shadow-md);
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      max-width: 900px;
+      width: 100%;
+      max-width: 100%; /* Use full width of container */
       margin-left: auto;
       margin-right: auto;
-      min-height: 280px;
-      max-height: 320px;
+      min-height: 220px; /* min-h-* instead of fixed height */
+      max-height: none; /* Remove fixed max-height */
       justify-content: center;
+    }
+    
+    @media (min-width: 768px) {
+      .hero-section {
+        min-height: 280px;
+        max-height: 320px;
+      }
     }
     
     .hero-section::before {
@@ -638,7 +761,7 @@
       transform: translateY(0);
     }
     
-    @media (max-width: 800px) {
+    @media (max-width: 767px) {
       .hero-section {
         padding: 20px 20px 20px 20px;
         margin-bottom: var(--space-lg);
@@ -903,11 +1026,11 @@
       background: rgba(255, 255, 255, 0.6);
     }
 
-    /* Mobile bottom bar for quick actions */
+    /* Mobile bottom bar removed - using BottomNav (AppFooter) instead */
     #mobile-bar{ 
-      display: none; 
+      display: none !important; 
     }
-    @media (max-width: 800px){
+    @media (max-width: 767px){
       .layout {
         grid-template-columns: 1fr;
         gap: var(--space-lg);
@@ -970,60 +1093,7 @@
         bottom: var(--space-sm);
       }
       
-      /* Remove old mobile-bar padding - AppFooter handles its own spacing */
-      /* body padding-bottom removed - handled by main#main-content padding-bottom */
-      
-      #mobile-bar{ 
-        display: flex; 
-        position: fixed; 
-        left: max(var(--space-md), env(safe-area-inset-left, 0px)); 
-        right: max(var(--space-md), env(safe-area-inset-right, 0px)); 
-        bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px)); 
-        gap: var(--space-md); 
-        z-index: 50; /* z-50 to stay above other content */
-        padding: var(--space-md);
-        padding-bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px));
-        background: var(--surface);
-        border-radius: 16px;
-        box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-light);
-        max-width: calc(100vw - 2 * max(var(--space-md), env(safe-area-inset-left, 0px)) - 2 * max(var(--space-md), env(safe-area-inset-right, 0px)));
-      }
-      /* Standardized Mobile Bar Buttons */
-      #mobile-bar .bar-btn{ 
-        flex: 1; 
-        padding: var(--space-md) var(--space-lg); 
-        border-radius: 12px; 
-        border: none; 
-        font-family: var(--font-graffiti);
-        font-weight: 600; 
-        font-size: 15px;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        cursor: pointer;
-        min-height: var(--touch-target-lg);
-        transition: all var(--transition-base);
-      }
-      #mobile-bar .bar-cart{ 
-        background: #D8FF3F; 
-        color: #0F0F0F;
-        box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
-      }
-      #mobile-bar .bar-cart:hover {
-        background: #E6FF7A;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(216, 255, 63, 0.5);
-      }
-      #mobile-bar .bar-shop{ 
-        background: linear-gradient(135deg, #B83EBF 0%, #A12EB8 100%);
-        color: #FFFFFF;
-        box-shadow: 0 4px 12px rgba(184, 62, 191, 0.3);
-      }
-      #mobile-bar .bar-shop:hover {
-        background: linear-gradient(135deg, #C85ECF 0%, #B83EBF 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(184, 62, 191, 0.4);
-      }
+      /* Mobile-bar removed - using BottomNav (AppFooter) instead */
       
       /* make buttons larger for touch */
       .btn, .nav-btn, .nav-toggle{ 
@@ -1031,13 +1101,21 @@
         min-height: var(--touch-target-lg);
       }
       
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: var(--space-md);
+      /* Products grid responsive classes handle mobile layout */
+      
+      /* Ensure card footer works on mobile */
+      .card-footer {
+        padding: var(--space-sm) var(--space-md) var(--space-md) var(--space-md);
+        gap: 8px; /* Slightly smaller gap on mobile */
       }
       
-      .card {
-        padding: var(--space-md);
+      .card-footer .btn-primary {
+        font-size: 12px;
+        padding: var(--space-xs) var(--space-sm);
+      }
+      
+      .card-footer .price {
+        font-size: 18px;
       }
       
       h2 {
@@ -1150,7 +1228,7 @@
       
     }
     /* Mobile-specific improvements */
-    @media (max-width: 800px) {
+    @media (max-width: 767px) {
       /* Improve scrolling */
       * {
         -webkit-overflow-scrolling: touch;
@@ -1191,12 +1269,28 @@
       gap: 0;
       box-shadow: var(--shadow-md);
       transition: all var(--transition-base);
-      height: 100%;
-      overflow: hidden;
+      height: auto; /* Remove fixed height, use auto */
+      position: relative; /* For pseudo-element hover effects */
+    }
+    /* Use pseudo-element for hover glow to prevent text clipping */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      pointer-events: none;
+      transition: all var(--transition-base);
+      z-index: 0;
     }
     .card:hover{ 
       transform: translateY(-2px); 
       box-shadow: var(--shadow-lg);
+    }
+    .card:hover::before {
       border-color: var(--primary);
     }
     .card-media{ 
@@ -1256,6 +1350,9 @@
       flex-direction: column;
       gap: var(--space-md);
       flex: 1;
+      min-width: 0; /* Allow flex items to shrink below content size */
+      position: relative; /* Ensure content is above pseudo-element */
+      z-index: 1;
     }
     .card-header {
       display: flex;
@@ -1287,20 +1384,31 @@
       min-height: 40px;
       margin-bottom: var(--space-sm);
     }
+    /* Product Card Footer - Price and Button Container */
     .card-footer {
       display: flex;
-      justify-content: space-between;
+      flex-direction: row;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px; /* Fixed 12px gap as specified */
       margin-top: auto;
-      padding-top: var(--space-sm);
-      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-lg) var(--space-md) var(--space-lg);
+      width: 100%;
+      box-sizing: border-box;
+      position: relative; /* Ensure footer is above pseudo-element */
+      z-index: 1;
     }
+    
+    /* Price styling */
     .price {
-      font-size: 22px;
+      font-size: clamp(18px, 2vw, 22px); /* Responsive text sizing */
       font-weight: 800;
       color: #FACC15; /* text-yellow-400 */
       letter-spacing: 0.01em;
       font-family: var(--font-body);
+      white-space: nowrap; /* Prevent price from wrapping */
+      flex-shrink: 0; /* Prevent price from shrinking */
+      min-width: 0; /* Allow to shrink if absolutely necessary */
     }
     /* Standardized Button Styles */
     .btn {
@@ -1325,10 +1433,49 @@
       color: #0F0F0F;
       font-family: var(--font-graffiti);
       font-weight: 600;
-      font-size: 15px;
-      letter-spacing: 0.05em;
+      font-size: clamp(12px, 1.5vw, 14px); /* Responsive font size */
+      letter-spacing: 0.03em;
       text-transform: uppercase;
       box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
+      padding: var(--space-sm) var(--space-md); /* Use padding, not width */
+      min-width: fit-content; /* Button sizes to content */
+      flex-shrink: 1; /* Allow button to shrink if needed */
+      white-space: nowrap; /* Keep text on one line */
+      box-sizing: border-box;
+      text-align: center; /* Center text */
+      overflow: visible; /* Ensure text is never clipped */
+    }
+    
+    /* Card footer button specific rules */
+    .card-footer .btn-primary {
+      max-width: none; /* Remove max-width restriction */
+      flex: 0 1 auto; /* Don't grow, can shrink, auto basis */
+      text-overflow: clip; /* Don't use ellipsis */
+      overflow: visible; /* Ensure button text is never clipped */
+    }
+    
+    /* Responsive adjustments for different screen sizes */
+    @media (min-width: 768px) {
+      .card-footer {
+        gap: 12px; /* Full gap on desktop */
+      }
+      
+      .card-footer .btn-primary {
+        font-size: 14px;
+        padding: var(--space-sm) var(--space-md);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .card-footer .price {
+        font-size: 22px;
+      }
+    }
+    
+    @media (min-width: 1440px) {
+      .card-footer {
+        padding: var(--space-sm) var(--space-xl) var(--space-md) var(--space-xl);
+      }
     }
     .btn-primary:hover {
       background: #E6FF7A;
@@ -1395,10 +1542,10 @@
       gap: var(--space-sm); 
     }
     
-    @media (max-width: 800px) {
+    @media (max-width: 767px) {
       .toast {
         right: var(--space-md);
-        bottom: calc(var(--space-md) + 100px); /* Above mobile bar */
+        bottom: calc(56px + env(safe-area-inset-bottom, 0px) + var(--space-md)); /* Above bottom nav */
         left: var(--space-md);
         max-width: none;
         width: calc(100vw - 2 * var(--space-md));
@@ -1810,21 +1957,21 @@
       font-size: 14px;
       line-height: 1.6;
     }
-    @media (max-width: 800px) {
+    @media (max-width: 767px) {
       header {
-        padding: 0;
-        padding-left: max(12px, env(safe-area-inset-left, 0px));
+        padding: var(--space-md) var(--space-lg);
+        padding-left: max(var(--space-md), env(safe-area-inset-left, 0px));
         padding-right: max(var(--space-md), env(safe-area-inset-right, 0px));
-        padding-top: env(safe-area-inset-top, 0px);
-        height: calc(64px + env(safe-area-inset-top, 0px));
-        min-height: calc(64px + env(safe-area-inset-top, 0px));
+        padding-top: max(var(--space-md), env(safe-area-inset-top, 0px));
+        height: auto;
+        min-height: 64px;
       }
       
-      /* Nav toggle removed - nav is always visible */
+      /* TopNav hidden on mobile - only logo and login shown */
       
       nav{ 
         position: static; 
-        display: flex; 
+        display: none !important; /* Hide TopNav on mobile */ 
         flex-direction: row; 
         background: transparent; 
         padding: 0; 
@@ -2791,9 +2938,9 @@
       }
     }
 
-    /* AppFooter - Mobile-only bottom navigation bar */
+    /* BottomNav - Mobile-only bottom navigation bar */
     .app-footer {
-      display: none;
+      display: flex; /* Show on mobile by default */
       position: fixed;
       bottom: 0;
       left: 0;
@@ -2801,7 +2948,7 @@
       width: 100%;
       background: var(--bg-secondary);
       border-top: 1px solid var(--border-light);
-      z-index: 1000;
+      z-index: 50;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
       /* Safe area support - add padding at bottom for iOS notch/home indicator */
       padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -2814,15 +2961,10 @@
       align-self: auto;
     }
 
+    /* Hide BottomNav on desktop (>=768px) */
     @media (min-width: 768px) {
       .app-footer {
         display: none !important;
-      }
-    }
-
-    @media (max-width: 767px) {
-      .app-footer {
-        display: block !important;
       }
     }
 
@@ -3104,15 +3246,14 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  <!-- AppShell - Global Layout Container -->
+  <div class="app-shell">
   <header>
     <a href="/" class="brand-link">
       <img class="brand-logo" src="assets/ZipMetroLogoRemoveBG (1).png" alt="ZipMetro" />
     </a>
     <nav id="site-nav" role="navigation" aria-label="Primary navigation">
-      <button class="nav-btn active" data-section="shop-section">Shop</button>
-      <button class="nav-btn" data-section="cart-section">Cart</button>
-      <button class="nav-btn" data-section="account-section">Account & ID</button>
-      <button class="nav-btn" data-section="admin-section" id="admin-nav-btn" style="display: none;">Admin</button>
+      <!-- Navigation buttons will be generated by JavaScript from navItems config -->
     </nav>
     <div class="header-right">
       <div class="cart-indicator">
@@ -3126,11 +3267,10 @@
     </div>
   </header>
 
-  <div class="layout">
-
-    <main id="main-content">
-      <!-- SHOP SECTION -->
-      <section id="shop-section" class="section active">
+  <main id="main-content">
+    <!-- SHOP SECTION -->
+    <section id="shop-section" class="section active">
+      <div class="page-container">
         <!-- Hero Banner Section -->
         <div class="hero-section">
           <div class="hero-content">
@@ -3140,7 +3280,10 @@
           </div>
         </div>
         
-        <!-- Categories and Search Bar -->
+        <!-- Carousel will be inserted here by JavaScript -->
+        <div id="carousel-container"></div>
+        
+        <!-- Categories - positioned after carousel -->
         <div class="category-list-container" style="margin-bottom: var(--space-lg);">
           <h3>Categories</h3>
           <ul class="category-list" id="category-list">
@@ -3180,10 +3323,12 @@
             </div>
           </div>
         </div>
+      </div>
       </section>
 
       <!-- CART SECTION -->
       <section id="cart-section" class="section">
+        <div class="page-container">
         <h2>Checkout</h2>
         
         <!-- Checkout Steps Progress -->
@@ -3308,6 +3453,7 @@
               <span id="checkout-summary-total">$0.00</span>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
@@ -3498,6 +3644,7 @@
 
       <!-- ADMIN SECTION -->
       <section id="admin-section" class="section">
+        <div class="page-container">
         <h2>Admin · ZipMetro Control</h2>
         <p class="text-muted" style="margin-bottom: var(--space-xl); font-size: 16px; line-height: 1.6;">This is a front-end-only admin stub. In production this would be behind auth and wired to your backend.</p>
 
@@ -3565,11 +3712,14 @@
               In production this table would be editable with create/update/delete actions,
               plus inventory counts and store/brand associations.
             </div>
+            </div>
           </div>
+        </div>
         </div>
       </section>
     </main>
   </div>
+  <!-- End AppShell -->
 
   <div id="toast" class="toast" aria-live="polite" hidden></div>
 
@@ -3722,10 +3872,7 @@
   </div>
   <div id="mini-cart-overlay" class="mini-cart-overlay" hidden></div>
 
-  <div id="mobile-bar" aria-hidden="false">
-    <button class="bar-btn bar-shop" onclick="switchSection('shop-section')">Shop</button>
-    <button class="bar-btn bar-cart" onclick="openMiniCart()">Cart (<span id="mobile-cart-count">0</span>)</button>
-  </div>
+  <!-- mobile-bar removed - using AppFooter (BottomNav) instead -->
   <button id="mobile-view-cart-cta" class="mobile-view-cart-cta" hidden>
     View Cart (<span id="mobile-view-cart-count">0</span>)
   </button>
@@ -3761,42 +3908,61 @@
     // products are loaded from the backend API (products.json) on startup
     let products = [];
 
-    // fallback dataset so the app still shows example products if no backend server is running
+    // fallback dataset - 3 example products per category with cannabis/edible images
     const fallbackProducts = [
+      // FLOWER - 3 products
       { id: 1, name: "Sunset Sherbet", category: "Flower", desc: "Hybrid · Smooth, creamy, evening friendly.", price: 45, thc: 25, image: "https://picsum.photos/seed/sunset-sherbet/800/440" },
       { id: 2, name: "ZipMetro House OG", category: "Flower", desc: "Indica-leaning classic with heavy body feel.", price: 40, thc: 27, image: "https://picsum.photos/seed/house-og/800/440" },
-      { id: 9, name: "Lemon Gaze", category: "Flower", desc: "Citrus sativa-leaning · bright and clear.", price: 38, thc: 22, image: "https://picsum.photos/seed/lemon-gaze/800/440" },
-      { id: 10, name: "Royal Kush", category: "Flower", desc: "Relaxing indica · couch-lock friendly.", price: 50, thc: 29, image: "https://picsum.photos/seed/royal-kush/800/440" },
-      { id: 11, name: "Blue Velvet", category: "Flower", desc: "Balanced Hybrid · smooth flavor.", price: 42, thc: 24, image: "https://picsum.photos/seed/blue-velvet/800/440" },
-      { id: 12, name: "Cali Dream", category: "Flower", desc: "Tropical terp profile · daytime use.", price: 44, thc: 26, image: "https://picsum.photos/seed/cali-dream/800/440" },
+      { id: 3, name: "Lemon Gaze", category: "Flower", desc: "Citrus sativa-leaning · bright and clear.", price: 38, thc: 22, image: "https://picsum.photos/seed/lemon-gaze/800/440" },
 
-      { id: 3, name: "Electric Haze Vape 1g", category: "Vape", desc: "Sativa cart · citrus & pine, day-time vibes.", price: 35, thc: 90, image: "https://picsum.photos/seed/electric-haze/800/440" },
-      { id: 4, name: "Night Drive Live Resin Cart", category: "Vape", desc: "Full-spectrum live resin · terp heavy.", price: 48, thc: 88, image: "https://picsum.photos/seed/night-drive/800/440" },
-      { id: 13, name: "Citrus Rush Cart", category: "Vape", desc: "Energetic sativa-forward cartridge.", price: 36, thc: 92, image: "https://picsum.photos/seed/citrus-rush/800/440" },
-      { id: 14, name: "Moonlight OG Cart", category: "Vape", desc: "Smooth indica cart for evenings.", price: 40, thc: 85, image: "https://picsum.photos/seed/moonlight-og/800/440" },
-      { id: 15, name: "Sparkle Hybrid 0.5g", category: "Vape", desc: "Compact pen · hybrid effects.", price: 28, thc: 75, image: "https://picsum.photos/seed/sparkle-hybrid/800/440" },
-      { id: 16, name: "High Noon 1g", category: "Vape", desc: "Daytime clarity · citrus notes.", price: 34, thc: 88, image: "https://picsum.photos/seed/high-noon/800/440" },
+      // VAPE - 3 products
+      { id: 4, name: "Electric Haze Vape 1g", category: "Vape", desc: "Sativa cart · citrus & pine, day-time vibes.", price: 35, thc: 90, image: "https://picsum.photos/seed/electric-haze/800/440" },
+      { id: 5, name: "Night Drive Live Resin Cart", category: "Vape", desc: "Full-spectrum live resin · terp heavy.", price: 48, thc: 88, image: "https://picsum.photos/seed/night-drive/800/440" },
+      { id: 6, name: "Citrus Rush Cart", category: "Vape", desc: "Energetic sativa-forward cartridge.", price: 36, thc: 92, image: "https://picsum.photos/seed/citrus-rush/800/440" },
 
-      { id: 5, name: "Guava Punch Live Rosin", category: "Extracts", desc: "Cold-cured rosin · fruit forward and loud.", price: 65, thc: 76, image: "https://picsum.photos/seed/guava-punch/800/440" },
-      { id: 6, name: "Diamond Sauce – Metro Fuel", category: "Extracts", desc: "High potency diamonds in terp sauce.", price: 70, thc: 82, image: "https://picsum.photos/seed/diamond-sauce/800/440" },
-      { id: 17, name: "Crystal Shatter", category: "Extracts", desc: "High-clarity shatter for potency seekers.", price: 68, thc: 85, image: "https://picsum.photos/seed/crystal-shatter/800/440" },
-      { id: 18, name: "Rosin Live Stack", category: "Extracts", desc: "Solventless rosin · full flavor.", price: 72, thc: 80, image: "https://picsum.photos/seed/rosin-live/800/440" },
-      { id: 19, name: "Terp Sauce Reserve", category: "Extracts", desc: "Flavor-forward sauce with rich terps.", price: 75, thc: 78, image: "https://picsum.photos/seed/terp-sauce/800/440" },
-      { id: 20, name: "Ultra Diamonds", category: "Extracts", desc: "Top-shelf diamonds for advanced users.", price: 88, thc: 92, image: "https://picsum.photos/seed/ultra-diamonds/800/440" },
+      // EXTRACTS - 3 products
+      { id: 7, name: "Guava Punch Live Rosin", category: "Extracts", desc: "Cold-cured rosin · fruit forward and loud.", price: 65, thc: 76, image: "https://picsum.photos/seed/guava-punch/800/440" },
+      { id: 8, name: "Diamond Sauce – Metro Fuel", category: "Extracts", desc: "High potency diamonds in terp sauce.", price: 70, thc: 82, image: "https://picsum.photos/seed/diamond-sauce/800/440" },
+      { id: 9, name: "Crystal Shatter", category: "Extracts", desc: "High-clarity shatter for potency seekers.", price: 68, thc: 85, image: "https://picsum.photos/seed/crystal-shatter/800/440" },
 
-      { id: 7, name: "Metro Mango Gummies 100mg", category: "Edibles", desc: "10 x 10mg pieces · mellow mango flavor.", price: 18, thc: 100, image: "https://picsum.photos/seed/mango-gummies/800/440" },
-      { id: 8, name: "NightCap Chocolates 200mg", category: "Edibles", desc: "8 x 25mg · rich dark chocolate squares.", price: 24, thc: 200, image: "https://picsum.photos/seed/nightcap-choco/800/440" },
-      { id: 21, name: "Citrus Chews 50mg", category: "Edibles", desc: "6 x 8.33mg chews · bright citrus.", price: 14, thc: 50, image: "https://picsum.photos/seed/citrus-chews/800/440" },
-      { id: 22, name: "Maple Bars 120mg", category: "Edibles", desc: "6 x 20mg bars · maple richness.", price: 22, thc: 120, image: "https://picsum.photos/seed/maple-bars/800/440" },
-      { id: 23, name: "Berry Blast Gummies 150mg", category: "Edibles", desc: "15 x 10mg · tangy berry mix.", price: 26, thc: 150, image: "https://picsum.photos/seed/berry-blast/800/440" },
-      { id: 24, name: "Espresso Bites 80mg", category: "Edibles", desc: "8 x 10mg · coffee-forward treats.", price: 19, thc: 80, image: "https://picsum.photos/seed/espresso-bites/800/440" }
+      // EDIBLES - 3 products
+      { id: 10, name: "Metro Mango Gummies 100mg", category: "Edibles", desc: "10 x 10mg pieces · mellow mango flavor.", price: 18, thc: 100, image: "https://picsum.photos/seed/mango-gummies/800/440" },
+      { id: 11, name: "NightCap Chocolates 200mg", category: "Edibles", desc: "8 x 25mg · rich dark chocolate squares.", price: 24, thc: 200, image: "https://picsum.photos/seed/nightcap-choco/800/440" },
+      { id: 12, name: "Berry Blast Gummies 150mg", category: "Edibles", desc: "15 x 10mg · tangy berry mix.", price: 26, thc: 150, image: "https://picsum.photos/seed/berry-blast/800/440" }
     ];
 
     async function loadProductsFromApi(){
       try{
         const res = await fetch('/api/products');
         if(!res.ok) throw new Error('Failed loading products');
-        products = await res.json();
+        const apiProducts = await res.json();
+        
+        // Merge API products with fallback products
+        // Use API products when available, otherwise use fallback for missing categories
+        const apiProductsByCategory = {};
+        apiProducts.forEach(p => {
+          if (!apiProductsByCategory[p.category]) {
+            apiProductsByCategory[p.category] = [];
+          }
+          apiProductsByCategory[p.category].push(p);
+        });
+        
+        // Build merged products array
+        products = [];
+        const categories = ['Flower', 'Vape', 'Extracts', 'Edibles'];
+        
+        categories.forEach(category => {
+          if (apiProductsByCategory[category] && apiProductsByCategory[category].length > 0) {
+            // Use API products for this category
+            products.push(...apiProductsByCategory[category]);
+          } else {
+            // Use fallback products for this category
+            const fallbackForCategory = fallbackProducts.filter(p => p.category === category);
+            products.push(...fallbackForCategory);
+          }
+        });
+        
+        console.log('Loaded products:', products.length, 'across', categories.length, 'categories');
       }catch(e){
         console.warn('Could not load products from API, falling back to client dataset.', e);
         products = fallbackProducts.slice();
@@ -3805,6 +3971,34 @@
       renderAdminProducts();
       updateCartIndicator();
     }
+
+    // Shared Navigation Configuration (Single Source of Truth)
+    const navItems = [
+      { 
+        id: 'shop-section', 
+        label: 'Shop', 
+        icon: `<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>`,
+        showForRole: null // Show for all users
+      },
+      { 
+        id: 'cart-section', 
+        label: 'Cart', 
+        icon: `<circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>`,
+        showForRole: null // Show for all users
+      },
+      { 
+        id: 'account-section', 
+        label: 'Account', 
+        icon: `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>`,
+        showForRole: null // Show for all users
+      },
+      { 
+        id: 'admin-section', 
+        label: 'Admin', 
+        icon: `<path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>`,
+        showForRole: 'admin' // Show only for admin users
+      }
+    ];
 
     let cart = [];
     let currentCategory = "Flower";
@@ -3853,7 +4047,6 @@
       const loginBtn = document.getElementById('login-toggle-btn');
       const userEmail = document.getElementById('user-email');
       const loginSection = document.getElementById('login-register-section');
-      const adminNavBtn = document.getElementById('admin-nav-btn');
       const adminAccountLink = document.getElementById('admin-account-link');
       
       if (currentUser) {
@@ -3866,10 +4059,8 @@
         
         // Show/hide admin navigation based on role
         if (currentUser.role === 'admin') {
-          if (adminNavBtn) adminNavBtn.style.display = 'inline-flex';
           if (adminAccountLink) adminAccountLink.style.display = 'block';
         } else {
-          if (adminNavBtn) adminNavBtn.style.display = 'none';
           if (adminAccountLink) adminAccountLink.style.display = 'none';
         }
       } else {
@@ -3879,9 +4070,12 @@
           loginSection.style.display = 'block';
         }
         // Hide admin elements when logged out
-        if (adminNavBtn) adminNavBtn.style.display = 'none';
         if (adminAccountLink) adminAccountLink.style.display = 'none';
       }
+      
+      // Re-render navigation to reflect role changes
+      renderTopNav();
+      renderBottomNav();
     }
 
     async function login(email, password) {
@@ -4003,8 +4197,11 @@
       showToast('Logged out successfully', 'OK');
     }
 
-    // Initialize auth on load
+    // Initialize auth on load (this will call updateUserStatus which re-renders nav)
     checkAuth();
+    
+    // Ensure navigation is initialized after auth check
+    // Navigation will be re-rendered by updateUserStatus when auth state is determined
 
     // --- Helpers -----------------------------------------------------------
     function formatMoney(v) {
@@ -4033,9 +4230,10 @@
         return;
       }
 
-      // Insert responsive carousel hero above the products grid
+      // Insert responsive carousel hero above the categories
       const existingHero = document.querySelector('.hero-carousel');
-      if(!existingHero){
+      const carouselContainer = document.getElementById('carousel-container');
+      if(!existingHero && carouselContainer){
         const carousel = document.createElement('div');
         carousel.className = 'hero-carousel';
         carousel.setAttribute('role', 'region');
@@ -4048,7 +4246,7 @@
           </div>
           <div class="carousel-indicators" role="tablist"></div>
         `;
-        grid.parentNode.insertBefore(carousel, grid);
+        carouselContainer.appendChild(carousel);
 
         // Load slides from localStorage or use defaults
         const savedSlides = JSON.parse(localStorage.getItem('carouselSlides') || '[]');
@@ -4350,26 +4548,15 @@
       document.querySelectorAll("main .section").forEach(sec => {
         sec.classList.toggle("active", sec.id === id);
       });
-      document.querySelectorAll(".nav-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.getAttribute("data-section") === id);
-      });
-      // Update AppFooter active states
-      document.querySelectorAll(".app-footer-link").forEach(link => {
-        const linkSection = link.getAttribute("data-section");
-        link.classList.toggle("active", linkSection === id);
-      });
+      // Update navigation active states (handled by updateNavActiveStates)
+      updateNavActiveStates();
       if (id === "shop-section") renderProducts();
       if (id === "cart-section") renderCart();
     }
 
     // --- Event wiring ------------------------------------------------------
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-section");
-        switchSection(id);
-      });
-
-    });
+    // Navigation buttons are now dynamically generated, so event listeners
+    // are attached in renderTopNav() and renderBottomNav() functions
 
     document.getElementById("category-list").addEventListener("click", e => {
       const item = e.target.closest(".category-item");
@@ -4653,6 +4840,10 @@
         if (typeof updateCheckoutSummary === 'function') updateCheckoutSummary();
       }
       originalSwitchSection(id);
+      // Update navigation active states after section switch
+      updateNavActiveStates();
+      // Update AppFooter active states (for backward compatibility)
+      if (typeof initAppFooter === 'function') initAppFooter();
     };
 
     // Image preview functionality
@@ -5263,53 +5454,107 @@
     initMobileCartCTA();
     updateCheckoutSummary();
     
-    // Initialize AppFooter active state
-    function initAppFooter() {
-      // Find the currently active section
-      const activeSection = document.querySelector('.section.active');
-      if (activeSection) {
-        const sectionId = activeSection.id;
-        // Update AppFooter active states
-        document.querySelectorAll(".app-footer-link").forEach(link => {
-          const linkSection = link.getAttribute("data-section");
-          link.classList.toggle("active", linkSection === sectionId);
-        });
-      }
+    // Render TopNav (Desktop header navigation)
+    function renderTopNav() {
+      const topNav = document.getElementById('site-nav');
+      if (!topNav) return;
+      
+      topNav.innerHTML = '';
+      
+      navItems.forEach(item => {
+        // Check role-based visibility
+        if (item.showForRole && (!currentUser || currentUser.role !== item.showForRole)) {
+          return; // Skip this item
+        }
+        
+        const button = document.createElement('button');
+        button.className = 'nav-btn';
+        button.setAttribute('data-section', item.id);
+        button.textContent = item.label;
+        button.addEventListener('click', () => switchSection(item.id));
+        topNav.appendChild(button);
+      });
+      
+      updateNavActiveStates();
     }
-    initAppFooter();
+    
+    // Render BottomNav (Mobile bottom navigation)
+    function renderBottomNav() {
+      const bottomNav = document.getElementById('bottom-nav');
+      if (!bottomNav) return;
+      
+      bottomNav.innerHTML = '';
+      
+      // Filter nav items for bottom nav (exclude admin from bottom nav, show in account section instead)
+      const bottomNavItems = navItems.filter(item => item.id !== 'admin-section');
+      
+      bottomNavItems.forEach(item => {
+        // Check role-based visibility
+        if (item.showForRole && (!currentUser || currentUser.role !== item.showForRole)) {
+          return; // Skip this item
+        }
+        
+        const button = document.createElement('button');
+        button.className = 'app-footer-link';
+        button.setAttribute('data-section', item.id);
+        button.setAttribute('aria-label', item.label);
+        button.onclick = () => switchSection(item.id);
+        
+        button.innerHTML = `
+          <div class="app-footer-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              ${item.icon}
+            </svg>
+          </div>
+          <span class="app-footer-label">${item.label}</span>
+        `;
+        
+        bottomNav.appendChild(button);
+      });
+      
+      updateNavActiveStates();
+    }
+    
+    // Update active states for both TopNav and BottomNav
+    function updateNavActiveStates() {
+      const activeSection = document.querySelector('.section.active');
+      if (!activeSection) return;
+      
+      const sectionId = activeSection.id;
+      
+      // Update TopNav active states
+      document.querySelectorAll('#site-nav .nav-btn').forEach(btn => {
+        const btnSection = btn.getAttribute('data-section');
+        btn.classList.toggle('active', btnSection === sectionId);
+      });
+      
+      // Update BottomNav active states
+      document.querySelectorAll('.app-footer-link').forEach(link => {
+        const linkSection = link.getAttribute('data-section');
+        link.classList.toggle('active', linkSection === sectionId);
+      });
+    }
+    
+    // Initialize navigation (TopNav and BottomNav)
+    function initNavigation() {
+      renderTopNav();
+      renderBottomNav();
+      updateNavActiveStates();
+    }
+    
+    // Initialize AppFooter active state (kept for backward compatibility)
+    function initAppFooter() {
+      updateNavActiveStates();
+    }
+    
+    // Initialize navigation on page load
+    initNavigation();
   </script>
 
-  <!-- AppFooter - Mobile-only bottom navigation -->
+  <!-- BottomNav - Mobile-only bottom navigation -->
   <div class="app-footer">
-    <nav role="navigation" aria-label="Primary app navigation">
-      <button class="app-footer-link" data-section="shop-section" onclick="switchSection('shop-section')" aria-label="Shop">
-        <div class="app-footer-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-        </div>
-        <span class="app-footer-label">Shop</span>
-      </button>
-      <button class="app-footer-link" data-section="cart-section" onclick="switchSection('cart-section')" aria-label="Cart">
-        <div class="app-footer-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-        </div>
-        <span class="app-footer-label">Cart</span>
-      </button>
-      <button class="app-footer-link" data-section="account-section" onclick="switchSection('account-section')" aria-label="Account">
-        <div class="app-footer-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </div>
-        <span class="app-footer-label">Account</span>
-      </button>
+    <nav role="navigation" aria-label="Primary app navigation" id="bottom-nav">
+      <!-- Navigation links will be generated by JavaScript from navItems config -->
     </nav>
   </div>
 
@@ -5378,4 +5623,5 @@
   </footer>
 </body>
 </html>
+
 
