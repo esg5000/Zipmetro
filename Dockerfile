@@ -12,7 +12,6 @@ RUN npm ci
 # Copy application files
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
-COPY assets/ ./assets/ 2>/dev/null || true
 
 # Create necessary directories
 RUN mkdir -p data uploads

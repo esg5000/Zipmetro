@@ -1449,7 +1449,7 @@
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      gap: 12px; /* Fixed 12px gap as specified */
+      gap: 12px; /* gap-3 equivalent (0.75rem / 12px) */
       margin-top: auto;
       padding: var(--space-sm) var(--space-lg) var(--space-md) var(--space-lg);
       width: 100%;
@@ -1460,8 +1460,8 @@
     
     /* Price styling */
     .price {
-      font-size: clamp(18px, 2vw, 22px); /* Responsive text sizing */
-      font-weight: 800;
+      font-size: 18px; /* text-lg equivalent */
+      font-weight: 700; /* font-bold */
       color: #FACC15; /* text-yellow-400 */
       letter-spacing: 0.01em;
       font-family: var(--font-body);
@@ -1491,12 +1491,13 @@
       background: #D8FF3F;
       color: #0F0F0F;
       font-family: var(--font-graffiti);
-      font-weight: 600;
+      font-weight: 600; /* font-semibold */
       font-size: clamp(12px, 1.5vw, 14px); /* Responsive font size */
       letter-spacing: 0.03em;
       text-transform: uppercase;
       box-shadow: 0 4px 12px rgba(216, 255, 63, 0.4);
-      padding: var(--space-sm) var(--space-md); /* Use padding, not width */
+      padding: 8px 20px; /* py-2 px-5 equivalent */
+      border-radius: 9999px; /* rounded-full */
       min-width: fit-content; /* Button sizes to content */
       flex-shrink: 1; /* Allow button to shrink if needed */
       white-space: nowrap; /* Keep text on one line */
@@ -1521,7 +1522,7 @@
       
       .card-footer .btn-primary {
         font-size: 14px;
-        padding: var(--space-sm) var(--space-md);
+        padding: 8px 20px; /* py-2 px-5 equivalent */
       }
     }
     
@@ -4473,7 +4474,7 @@
             <div class="card-desc">${p.desc}</div>
             <div class="card-footer">
               <span class="price">${formatMoney(p.price)}</span>
-              <button class="btn btn-primary" data-add-id="${p.id}">Add to cart</button>
+              <button class="btn btn-primary" data-add-id="${p.id}">Add to Cart</button>
             </div>
           </div>
         `;
