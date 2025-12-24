@@ -589,30 +589,40 @@
     
     /* Mobile: Horizontal scrollable product cards */
     @media (max-width: 767px) {
+      /* Make page-container allow horizontal overflow for products-grid */
+      #shop-section .page-container {
+        overflow-x: visible;
+      }
+      
       .products-grid {
-        display: flex;
-        flex-direction: row;
-        grid-template-columns: none;
-        overflow-x: auto;
-        overflow-y: hidden;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        grid-template-columns: none !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         scrollbar-width: thin; /* Firefox */
         scrollbar-color: var(--primary) var(--bg-secondary);
         gap: var(--space-md);
         padding-bottom: var(--space-sm); /* Space for scrollbar */
-        margin-left: calc(-1 * var(--space-md)); /* Offset page-container padding */
+        margin-left: calc(-1 * var(--space-md)); /* Break out of page-container padding */
         margin-right: calc(-1 * var(--space-md));
         padding-left: var(--space-md);
         padding-right: var(--space-md);
+        width: calc(100% + 2 * var(--space-md));
+        max-width: none;
       }
       
       .products-grid .card {
-        flex: 0 0 calc(85vw - var(--space-md)); /* Card width: 85% of viewport minus gap */
-        min-width: calc(85vw - var(--space-md));
-        max-width: calc(85vw - var(--space-md));
+        flex: 0 0 calc(85vw - 2 * var(--space-md)) !important; /* Card width: 85% of viewport minus padding */
+        min-width: calc(85vw - 2 * var(--space-md)) !important;
+        max-width: calc(85vw - 2 * var(--space-md)) !important;
+        width: calc(85vw - 2 * var(--space-md)) !important;
         scroll-snap-align: start; /* Snap to each card */
         height: auto;
+        flex-shrink: 0 !important; /* Prevent cards from shrinking */
       }
       
       /* Custom scrollbar for mobile */
@@ -1232,10 +1242,7 @@
         font-size: 16px; 
       }
       
-      .products-grid{ 
-        grid-template-columns: 1fr; 
-        gap: var(--space-md);
-      }
+      /* Removed conflicting products-grid rule - using flex layout for horizontal scrolling */
       
       .map-shell{ 
         height: 240px; 
@@ -4437,6 +4444,15 @@
       filtered.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
+        // Ensure cards have proper width on mobile for horizontal scrolling
+        if (window.innerWidth <= 767) {
+          const viewportWidth = window.innerWidth;
+          const cardWidth = Math.floor(viewportWidth * 0.85 - 32); // 85vw minus ~32px for padding
+          card.style.flexShrink = '0';
+          card.style.width = `${cardWidth}px`;
+          card.style.minWidth = `${cardWidth}px`;
+          card.style.maxWidth = `${cardWidth}px`;
+        }
         const imgUrl = p.image || svgPlaceholder(p.name.split(' ')[0], 800, 440, p.id);
         card.innerHTML = `
           <div class="card-media skeleton" aria-hidden="true">
@@ -4484,40 +4500,45 @@
       });
       
       // Add swipe/touch functionality for mobile product scrolling
-      // Use a flag to prevent duplicate initialization
-      if (window.innerWidth <= 767 && !grid.dataset.swipeInitialized) {
+      // Always re-initialize on mobile since products are re-rendered
+      if (window.innerWidth <= 767) {
+        // Remove any existing handlers by checking if already initialized
+        if (grid.dataset.swipeHandlersAdded === 'true') {
+          // Grid was recreated, need to re-initialize
+          grid.dataset.swipeHandlersAdded = 'false';
+        }
         initProductSwipe(grid);
-        grid.dataset.swipeInitialized = 'true';
-      }
-      
-      // Re-initialize on window resize (only if switching to mobile)
-      let resizeTimeout;
-      const handleResize = () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          if (window.innerWidth <= 767 && !grid.dataset.swipeInitialized) {
-            initProductSwipe(grid);
-            grid.dataset.swipeInitialized = 'true';
-          } else if (window.innerWidth > 767 && grid.dataset.swipeInitialized) {
-            // Remove swipe handlers on desktop
-            grid.dataset.swipeInitialized = 'false';
-          }
-        }, 250);
-      };
-      
-      // Only add resize listener once
-      if (!window.productSwipeResizeListener) {
-        window.productSwipeResizeListener = handleResize;
-        window.addEventListener('resize', handleResize);
       }
     }
     
     // Initialize swipe functionality for product cards on mobile
     function initProductSwipe(grid) {
-      if (!grid || grid.dataset.swipeHandlersAdded) return;
+      if (!grid) return;
+      
+      // Skip if already initialized (to avoid duplicate handlers)
+      if (grid.dataset.swipeHandlersAdded === 'true') {
+        return;
+      }
       
       // Mark as initialized to prevent duplicate handlers
       grid.dataset.swipeHandlersAdded = 'true';
+      
+      // Force flex layout on mobile (in case CSS hasn't applied yet)
+      if (window.innerWidth <= 767) {
+        grid.style.display = 'flex';
+        grid.style.flexDirection = 'row';
+        grid.style.flexWrap = 'nowrap';
+        grid.style.overflowX = 'auto';
+        grid.style.overflowY = 'hidden';
+        grid.style.scrollBehavior = 'smooth';
+        // Ensure grid takes full width for horizontal scrolling
+        const pageContainer = grid.closest('.page-container');
+        if (pageContainer) {
+          grid.style.width = 'calc(100% + 2 * 16px)'; // Break out of padding
+          grid.style.marginLeft = '-16px';
+          grid.style.marginRight = '-16px';
+        }
+      }
       
       let isDown = false;
       let startX;
