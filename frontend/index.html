@@ -576,7 +576,7 @@
       color: var(--text-muted);
     }
     /* Featured Deal ad-block removed */
-    /* Products Grid - Responsive Grid Layout */
+    /* Products Grid - Responsive Layout */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr); /* grid-cols-2 */
@@ -587,10 +587,60 @@
       overflow-x: hidden;
     }
     
+    /* Mobile: Horizontal scrollable product cards */
+    @media (max-width: 767px) {
+      .products-grid {
+        display: flex;
+        flex-direction: row;
+        grid-template-columns: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: var(--primary) var(--bg-secondary);
+        gap: var(--space-md);
+        padding-bottom: var(--space-sm); /* Space for scrollbar */
+        margin-left: calc(-1 * var(--space-md)); /* Offset page-container padding */
+        margin-right: calc(-1 * var(--space-md));
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+      }
+      
+      .products-grid .card {
+        flex: 0 0 calc(85vw - var(--space-md)); /* Card width: 85% of viewport minus gap */
+        min-width: calc(85vw - var(--space-md));
+        max-width: calc(85vw - var(--space-md));
+        scroll-snap-align: start; /* Snap to each card */
+        height: auto;
+      }
+      
+      /* Custom scrollbar for mobile */
+      .products-grid::-webkit-scrollbar {
+        height: 4px;
+      }
+      
+      .products-grid::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+        border-radius: 2px;
+      }
+      
+      .products-grid::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 2px;
+      }
+      
+      .products-grid::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+      }
+    }
+    
     @media (min-width: 768px) {
       .products-grid {
+        display: grid;
         grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
         gap: var(--space-lg);
+        overflow-x: hidden; /* No horizontal scroll on desktop */
       }
     }
     
@@ -3910,10 +3960,10 @@
 
     // fallback dataset - 3 example products per category with cannabis/edible images
     const fallbackProducts = [
-      // FLOWER - 3 products
-      { id: 1, name: "Sunset Sherbet", category: "Flower", desc: "Hybrid · Smooth, creamy, evening friendly.", price: 45, thc: 25, image: "https://picsum.photos/seed/sunset-sherbet/800/440" },
-      { id: 2, name: "ZipMetro House OG", category: "Flower", desc: "Indica-leaning classic with heavy body feel.", price: 40, thc: 27, image: "https://picsum.photos/seed/house-og/800/440" },
-      { id: 3, name: "Lemon Gaze", category: "Flower", desc: "Citrus sativa-leaning · bright and clear.", price: 38, thc: 22, image: "https://picsum.photos/seed/lemon-gaze/800/440" },
+      // FLOWER - 3 cannabis flower products
+      { id: 1, name: "Purple Haze", category: "Flower", desc: "Classic sativa · Uplifting and energizing with sweet berry notes.", price: 42, thc: 24, image: "https://picsum.photos/seed/purple-haze/800/440" },
+      { id: 2, name: "Blue Dream", category: "Flower", desc: "Balanced hybrid · Relaxing body high with creative mental clarity.", price: 48, thc: 26, image: "https://picsum.photos/seed/blue-dream/800/440" },
+      { id: 3, name: "OG Kush", category: "Flower", desc: "Indica-dominant · Deep relaxation with earthy, pine flavors.", price: 50, thc: 28, image: "https://picsum.photos/seed/og-kush/800/440" },
 
       // VAPE - 3 products
       { id: 4, name: "Electric Haze Vape 1g", category: "Vape", desc: "Sativa cart · citrus & pine, day-time vibes.", price: 35, thc: 90, image: "https://picsum.photos/seed/electric-haze/800/440" },
@@ -4432,6 +4482,152 @@
           showToast(`${product ? product.name : 'Item'} added to cart`, 'View cart', () => switchSection('cart-section'));
         });
       });
+      
+      // Add swipe/touch functionality for mobile product scrolling
+      // Use a flag to prevent duplicate initialization
+      if (window.innerWidth <= 767 && !grid.dataset.swipeInitialized) {
+        initProductSwipe(grid);
+        grid.dataset.swipeInitialized = 'true';
+      }
+      
+      // Re-initialize on window resize (only if switching to mobile)
+      let resizeTimeout;
+      const handleResize = () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (window.innerWidth <= 767 && !grid.dataset.swipeInitialized) {
+            initProductSwipe(grid);
+            grid.dataset.swipeInitialized = 'true';
+          } else if (window.innerWidth > 767 && grid.dataset.swipeInitialized) {
+            // Remove swipe handlers on desktop
+            grid.dataset.swipeInitialized = 'false';
+          }
+        }, 250);
+      };
+      
+      // Only add resize listener once
+      if (!window.productSwipeResizeListener) {
+        window.productSwipeResizeListener = handleResize;
+        window.addEventListener('resize', handleResize);
+      }
+    }
+    
+    // Initialize swipe functionality for product cards on mobile
+    function initProductSwipe(grid) {
+      if (!grid || grid.dataset.swipeHandlersAdded) return;
+      
+      // Mark as initialized to prevent duplicate handlers
+      grid.dataset.swipeHandlersAdded = 'true';
+      
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let startY;
+      let hasScrolled = false;
+      
+      // Touch/Mouse start
+      const handleStart = (e) => {
+        const touch = e.touches ? e.touches[0] : null;
+        const clientX = touch ? touch.clientX : e.clientX;
+        const clientY = touch ? touch.clientY : e.clientY;
+        
+        // Check if click is on a button - if so, don't start swipe
+        const target = e.target;
+        if (target.closest('button') || target.closest('.btn')) {
+          return;
+        }
+        
+        isDown = true;
+        hasScrolled = false;
+        grid.style.cursor = 'grabbing';
+        grid.style.scrollBehavior = 'auto';
+        startX = clientX - grid.getBoundingClientRect().left;
+        startY = clientY - grid.getBoundingClientRect().top;
+        scrollLeft = grid.scrollLeft;
+      };
+      
+      // Touch/Mouse move
+      const handleMove = (e) => {
+        if (!isDown) return;
+        
+        const touch = e.touches ? e.touches[0] : null;
+        const clientX = touch ? touch.clientX : e.clientX;
+        const clientY = touch ? touch.clientY : e.clientY;
+        
+        const x = clientX - grid.getBoundingClientRect().left;
+        const y = clientY - grid.getBoundingClientRect().top;
+        const walkX = (x - startX) * 1.2;
+        const walkY = Math.abs(y - startY);
+        
+        // Only scroll horizontally if horizontal movement is greater than vertical
+        if (Math.abs(walkX) > Math.abs(walkY) && Math.abs(walkX) > 5) {
+          e.preventDefault();
+          hasScrolled = true;
+          grid.scrollLeft = scrollLeft - walkX;
+        }
+      };
+      
+      // Touch/Mouse end
+      const handleEnd = (e) => {
+        if (!isDown) return;
+        isDown = false;
+        grid.style.cursor = 'grab';
+        grid.style.scrollBehavior = 'smooth';
+        
+        // If user scrolled, prevent click events on cards
+        if (hasScrolled) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Temporarily disable clicks on cards
+          const cards = grid.querySelectorAll('.card');
+          cards.forEach(card => {
+            card.style.pointerEvents = 'none';
+            setTimeout(() => {
+              card.style.pointerEvents = 'auto';
+            }, 100);
+          });
+        }
+        
+        // Snap to nearest card after a brief delay
+        setTimeout(() => {
+          snapToNearestCard(grid);
+        }, 150);
+      };
+      
+      // Snap to nearest card
+      function snapToNearestCard(grid) {
+        const cards = grid.querySelectorAll('.card');
+        if (cards.length === 0) return;
+        
+        const firstCard = cards[0];
+        const cardWidth = firstCard.offsetWidth;
+        const gap = parseInt(getComputedStyle(grid).gap) || 16;
+        const cardWidthWithGap = cardWidth + gap;
+        const scrollLeft = grid.scrollLeft;
+        const nearestIndex = Math.round(scrollLeft / cardWidthWithGap);
+        const targetScroll = Math.max(0, Math.min(nearestIndex * cardWidthWithGap, grid.scrollWidth - grid.clientWidth));
+        
+        grid.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+      }
+      
+      // Mouse events (for testing on desktop with mouse)
+      grid.addEventListener('mousedown', handleStart);
+      grid.addEventListener('mouseleave', handleEnd);
+      grid.addEventListener('mouseup', handleEnd);
+      grid.addEventListener('mousemove', handleMove);
+      
+      // Touch events (for mobile)
+      grid.addEventListener('touchstart', handleStart, { passive: true });
+      grid.addEventListener('touchend', handleEnd, { passive: false });
+      grid.addEventListener('touchmove', handleMove, { passive: false });
+      
+      // Add grab cursor style
+      grid.style.cursor = 'grab';
+      grid.style.userSelect = 'none';
     }
 
     function renderCart() {
