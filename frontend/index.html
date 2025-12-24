@@ -611,15 +611,17 @@
         margin-right: calc(-1 * var(--space-md));
         padding-left: var(--space-md);
         padding-right: var(--space-md);
-        width: calc(100% + 2 * var(--space-md));
-        max-width: none;
+        width: 100vw; /* Full viewport width */
+        max-width: 100vw;
       }
       
       .products-grid .card {
-        flex: 0 0 calc(85vw - 2 * var(--space-md)) !important; /* Card width: 85% of viewport minus padding */
-        min-width: calc(85vw - 2 * var(--space-md)) !important;
-        max-width: calc(85vw - 2 * var(--space-md)) !important;
-        width: calc(85vw - 2 * var(--space-md)) !important;
+        /* Card width: full viewport width minus left and right padding only */
+        /* This ensures one full card is visible at a time with no peek of next card */
+        flex: 0 0 calc(100vw - 2 * var(--space-md)) !important;
+        min-width: calc(100vw - 2 * var(--space-md)) !important;
+        max-width: calc(100vw - 2 * var(--space-md)) !important;
+        width: calc(100vw - 2 * var(--space-md)) !important;
         scroll-snap-align: start; /* Snap to each card */
         height: auto;
         flex-shrink: 0 !important; /* Prevent cards from shrinking */
@@ -4447,7 +4449,9 @@
         // Ensure cards have proper width on mobile for horizontal scrolling
         if (window.innerWidth <= 767) {
           const viewportWidth = window.innerWidth;
-          const cardWidth = Math.floor(viewportWidth * 0.85 - 32); // 85vw minus ~32px for padding
+          // Card width: full viewport minus left padding (16px) and right padding (16px) only
+          // This ensures one full card is visible at a time with no peek of next card
+          const cardWidth = Math.floor(viewportWidth - 32); // 100vw - 2*16px (padding only)
           card.style.flexShrink = '0';
           card.style.width = `${cardWidth}px`;
           card.style.minWidth = `${cardWidth}px`;
