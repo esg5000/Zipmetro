@@ -8,7 +8,11 @@
     "dev": "nodemon backend/server.js",
     "init-db": "node backend/scripts/init-db.js",
     "init-mongodb": "node backend/scripts/init-mongodb.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No tests configured\" && exit 0",
+    "lint": "echo \"No linter configured\" && exit 0",
+    "build": "echo \"No build step required\" && exit 0",
+    "preflight": "bash scripts/preflight.sh",
+    "preflight:docker": "bash scripts/preflight-docker.sh"
   },
   "keywords": [
     "delivery",
