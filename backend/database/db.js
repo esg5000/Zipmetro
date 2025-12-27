@@ -520,143 +520,157 @@ if (USE_MONGODB) {
   };
 
 } else {
-  // SQLite implementation (original)
+  // SQLite implementation (original) - lazy initialization
   const sqlite3 = require('sqlite3').verbose();
   const DB_PATH = process.env.DATABASE_PATH || path.join(__dirname, '../../data/zipmetro.db');
+  let sqliteDb = null;
 
-  // Ensure data directory exists
-  const dataDir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  db = new sqlite3.Database(DB_PATH, (err) => {
-    if (err) {
-      console.error('Error opening database:', err);
-    } else {
-      console.log('✅ Connected to SQLite database');
-      initializeDatabase();
+  function initializeSQLite() {
+    if (sqliteDb) {
+      return sqliteDb;
     }
-  });
 
-  function initializeDatabase() {
-    // Products table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        category TEXT NOT NULL,
-        desc TEXT,
-        price REAL NOT NULL,
-        thc INTEGER DEFAULT 0,
-        image TEXT,
-        stock INTEGER DEFAULT 0,
-        active BOOLEAN DEFAULT 1,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    // Ensure data directory exists (only when initializing)
+    const dataDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
 
-    // Users table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        first_name TEXT,
-        last_name TEXT,
-        phone TEXT,
-        dob DATE,
-        id_verified BOOLEAN DEFAULT 0,
-        id_image_path TEXT,
-        role TEXT DEFAULT 'user',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    sqliteDb = new sqlite3.Database(DB_PATH, (err) => {
+      if (err) {
+        console.error('Error opening database:', err);
+      } else {
+        console.log('✅ Connected to SQLite database');
+        initializeDatabase();
+      }
+    });
 
-    // Orders table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        customer_name TEXT NOT NULL,
-        customer_phone TEXT NOT NULL,
-        delivery_address TEXT NOT NULL,
-        delivery_window TEXT,
-        order_notes TEXT,
-        status TEXT DEFAULT 'pending',
-        total REAL NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )
-    `);
+    function initializeDatabase() {
+      // Products table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS products (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          category TEXT NOT NULL,
+          desc TEXT,
+          price REAL NOT NULL,
+          thc INTEGER DEFAULT 0,
+          image TEXT,
+          stock INTEGER DEFAULT 0,
+          active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
 
-    // Order items table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS order_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        quantity INTEGER NOT NULL,
-        price REAL NOT NULL,
-        FOREIGN KEY (order_id) REFERENCES orders(id),
-        FOREIGN KEY (product_id) REFERENCES products(id)
-      )
-    `);
+      // Users table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          email TEXT UNIQUE NOT NULL,
+          password_hash TEXT NOT NULL,
+          first_name TEXT,
+          last_name TEXT,
+          phone TEXT,
+          dob DATE,
+          id_verified BOOLEAN DEFAULT 0,
+          id_image_path TEXT,
+          role TEXT DEFAULT 'user',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
 
-    // Notifications preferences table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS notification_preferences (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        sms BOOLEAN DEFAULT 1,
-        email BOOLEAN DEFAULT 1,
-        push BOOLEAN DEFAULT 0,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )
-    `);
+      // Orders table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS orders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER,
+          customer_name TEXT NOT NULL,
+          customer_phone TEXT NOT NULL,
+          delivery_address TEXT NOT NULL,
+          delivery_window TEXT,
+          order_notes TEXT,
+          status TEXT DEFAULT 'pending',
+          total REAL NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+      `);
 
-    // Admin settings table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS admin_settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        key TEXT UNIQUE NOT NULL,
-        value TEXT,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+      // Order items table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS order_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          order_id INTEGER NOT NULL,
+          product_id INTEGER NOT NULL,
+          quantity INTEGER NOT NULL,
+          price REAL NOT NULL,
+          FOREIGN KEY (order_id) REFERENCES orders(id),
+          FOREIGN KEY (product_id) REFERENCES products(id)
+        )
+      `);
 
-    console.log('✅ Database tables initialized');
+      // Notifications preferences table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS notification_preferences (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          sms BOOLEAN DEFAULT 1,
+          email BOOLEAN DEFAULT 1,
+          push BOOLEAN DEFAULT 0,
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+      `);
+
+      // Admin settings table
+      sqliteDb.run(`
+        CREATE TABLE IF NOT EXISTS admin_settings (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          key TEXT UNIQUE NOT NULL,
+          value TEXT,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      console.log('✅ Database tables initialized');
+    }
+
+    return sqliteDb;
   }
 
-  // Promisify database methods
-  db.runAsync = function(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.run(sql, params, function(err) {
-        if (err) reject(err);
-        else resolve({ lastID: this.lastID, changes: this.changes });
+  // Promisify database methods with lazy initialization
+  db = {
+    async runAsync(sql, params = []) {
+      const database = initializeSQLite();
+      return new Promise((resolve, reject) => {
+        database.run(sql, params, function(err) {
+          if (err) reject(err);
+          else resolve({ lastID: this.lastID, changes: this.changes });
+        });
       });
-    });
-  };
+    },
 
-  db.getAsync = function(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.get(sql, params, (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
+    async getAsync(sql, params = []) {
+      const database = initializeSQLite();
+      return new Promise((resolve, reject) => {
+        database.get(sql, params, (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        });
       });
-    });
-  };
+    },
 
-  db.allAsync = function(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.all(sql, params, (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows);
+    async allAsync(sql, params = []) {
+      const database = initializeSQLite();
+      return new Promise((resolve, reject) => {
+        database.all(sql, params, (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        });
       });
-    });
+    }
   };
 }
 
