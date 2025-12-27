@@ -162,38 +162,35 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Initialize database connection before starting server
+// Import database (no side effects - MongoDB won't connect until initMongo() is called)
 const db = require('./database/db');
 
-// Wait for database to be ready (especially for MongoDB on Render.com)
-async function startServer() {
-  try {
-    // Give database a moment to connect (non-blocking)
-    // The database will retry connections automatically
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const PORT = process.env.PORT || 3001;
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 ZipMetro server running on port ${PORT}`);
-      console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 Frontend: http://localhost:${PORT}`);
-      console.log(`🔌 API: http://localhost:${PORT}/api`);
-      
-      // Log database status
-      if (process.env.DATABASE_URL || process.env.MONGODB_URI) {
-        console.log(`💾 Using MongoDB: ${process.env.DATABASE_URL ? 'DATABASE_URL set' : 'MONGODB_URI set'}`);
-      } else {
-        console.log(`💾 Using SQLite: ${process.env.DATABASE_PATH || './data/zipmetro.db'}`);
-      }
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
-  }
-}
+const PORT = process.env.PORT || 3001;
 
-// Start the server
-startServer();
+// Start server and initialize MongoDB at runtime
+app.listen(PORT, async () => {
+  console.log(`🚀 ZipMetro server running on port ${PORT}`);
+  console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Frontend: http://localhost:${PORT}`);
+  console.log(`🔌 API: http://localhost:${PORT}/api`);
+  
+  // Log database status
+  if (process.env.DATABASE_URL || process.env.MONGODB_URI) {
+    console.log(`💾 Using MongoDB: ${process.env.DATABASE_URL ? 'DATABASE_URL set' : 'MONGODB_URI set'}`);
+  } else {
+    console.log(`💾 Using SQLite: ${process.env.DATABASE_PATH || './data/zipmetro.db'}`);
+  }
+  
+  // Initialize MongoDB at runtime (non-blocking, won't crash server if it fails)
+  if (db.initMongo) {
+    try {
+      await db.initMongo();
+    } catch (error) {
+      console.error('⚠️  Failed to initialize MongoDB:', error.message);
+      console.error('   Server will continue, but database operations may fail');
+      // Don't throw - allow server to continue
+    }
+  }
+});
 
 module.exports = app;

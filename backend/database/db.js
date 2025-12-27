@@ -1,25 +1,25 @@
 const path = require('path');
 const fs = require('fs');
 
-// Check if MongoDB should be used
+// Check if MongoDB should be used (only for determining implementation, not for connection)
 const USE_MONGODB = !!(process.env.DATABASE_URL || process.env.MONGODB_URI);
-const MONGO_URL = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 let db;
+let initMongo; // Will be assigned conditionally
 
 if (USE_MONGODB) {
   // MongoDB implementation
   const { MongoClient, ObjectId } = require('mongodb');
   const bcrypt = require('bcrypt');
-  let mongoClient;
-  let mongoDb;
+  let mongoClient = null;
+  let mongoDb = null;
   let isConnecting = false;
   let connectionPromise = null;
 
   // Track if admin has been ensured (to avoid running multiple times)
   let adminEnsured = false;
 
-  // Helper function to ensure MongoDB connection
+  // Helper function to ensure MongoDB connection (lazy - only if already initialized)
   async function ensureConnection() {
     // If already connected, return
     if (mongoDb && mongoClient && mongoClient.topology && mongoClient.topology.isConnected()) {
@@ -35,122 +35,17 @@ if (USE_MONGODB) {
       return;
     }
 
+    // If not initialized, throw error - initMongo() must be called first
+    if (!mongoClient) {
+      throw new Error('MongoDB not initialized. Call initMongo() first.');
+    }
+
     // If already connecting, wait for that promise
     if (isConnecting && connectionPromise) {
       await connectionPromise;
       return;
     }
-
-    // Start new connection
-    isConnecting = true;
-    connectionPromise = (async () => {
-      try {
-        console.log('🔌 Connecting to MongoDB...');
-        
-        // Close existing client if any
-        if (mongoClient) {
-          try {
-            await mongoClient.close();
-          } catch (e) {
-            // Ignore close errors
-          }
-        }
-
-        // MongoDB connection options optimized for Render.com
-        // MongoDB Atlas (mongodb+srv://) handles TLS automatically - don't override!
-        const isAtlasConnection = MONGO_URL.startsWith('mongodb+srv://');
-        const urlHasTls = MONGO_URL.includes('tls=true') || MONGO_URL.includes('ssl=true');
-        
-        const mongoOptions = {
-          serverSelectionTimeoutMS: 30000, // 30 seconds for Render.com network latency
-          connectTimeoutMS: 30000,
-          socketTimeoutMS: 45000,
-          retryWrites: true,
-          retryReads: true,
-          // Connection pool settings
-          maxPoolSize: 10,
-          minPoolSize: 1,
-        };
-        
-        // Only add TLS options for non-Atlas connections that don't already have TLS
-        // MongoDB Atlas automatically handles TLS - adding our own causes conflicts!
-        if (!isAtlasConnection && !urlHasTls) {
-          // For non-Atlas connections without TLS in URL, add TLS if needed
-          mongoOptions.tls = true;
-          mongoOptions.tlsAllowInvalidCertificates = false;
-          mongoOptions.tlsAllowInvalidHostnames = false;
-        }
-        // For Atlas connections or connections with TLS in URL, let MongoDB handle TLS
-        
-        console.log(`🔗 MongoDB connection type: ${isAtlasConnection ? 'Atlas (mongodb+srv://)' : 'Standard (mongodb://)'}`);
-        
-        mongoClient = new MongoClient(MONGO_URL, mongoOptions);
-        
-        await mongoClient.connect();
-        mongoDb = mongoClient.db();
-        console.log('✅ Connected to MongoDB');
-        
-        // Initialize collections and indexes
-        await initializeMongoDB();
-        
-        // Ensure admin user exists (only once)
-        if (!adminEnsured) {
-          await ensureAdmin(mongoDb);
-          adminEnsured = true;
-        }
-        
-        isConnecting = false;
-      } catch (err) {
-        isConnecting = false;
-        console.error('❌ MongoDB connection error:', err.message);
-        
-        // More detailed error logging for debugging on Render.com
-        if (err.message.includes('SSL') || err.message.includes('TLS') || err.message.includes('tlsv1')) {
-          console.error('   SSL/TLS error detected - this is often caused by:');
-          console.error('   1. MongoDB connection string format issues');
-          console.error('   2. TLS settings conflict (connection string vs code settings)');
-          console.error('   3. Network/firewall blocking TLS handshake');
-          console.error('   Try: Check your DATABASE_URL format and ensure it matches your MongoDB provider');
-        } else if (err.message.includes('timeout')) {
-          console.error('   Connection timeout - check network connectivity and MongoDB URL');
-        } else if (err.message.includes('authentication')) {
-          console.error('   Authentication failed - check MongoDB username/password');
-        }
-        
-        console.error('   Server will continue but database operations may fail');
-        console.error('   Please check your DATABASE_URL and MongoDB connection');
-        throw err;
-      }
-    })();
-
-    await connectionPromise;
   }
-
-  // Initialize MongoDB connection (non-blocking, but with retry logic)
-  (async () => {
-    let retries = 0;
-    const maxRetries = 3;
-    
-    while (retries < maxRetries) {
-      try {
-        console.log(`🔄 Attempting MongoDB connection (attempt ${retries + 1}/${maxRetries})...`);
-        await ensureConnection();
-        console.log('✅ MongoDB connection established on startup');
-        break; // Success, exit retry loop
-      } catch (err) {
-        retries++;
-        if (retries < maxRetries) {
-          const waitTime = Math.min(1000 * Math.pow(2, retries), 10000); // Exponential backoff, max 10s
-          console.log(`⚠️  MongoDB connection attempt ${retries} failed, retrying in ${waitTime}ms...`);
-          await new Promise(resolve => setTimeout(resolve, waitTime));
-        } else {
-          console.log('⚠️  MongoDB initial connection failed after all retries');
-          console.log('   Server will continue but database operations may fail');
-          console.log('   Connection will be retried on first database operation');
-        }
-      }
-    }
-  })();
 
   async function initializeMongoDB() {
     try {
@@ -164,6 +59,131 @@ if (USE_MONGODB) {
       console.error('⚠️  Error initializing MongoDB indexes:', err.message);
     }
   }
+
+  // Initialize MongoDB connection - must be called explicitly at runtime
+  initMongo = async function initMongo() {
+    const MONGO_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || process.env.MONGO_URL;
+    
+    // Check if MONGO_URL is set
+    if (!MONGO_URL) {
+      console.warn('⚠️  MONGO_URL not set, skipping Mongo init');
+      return null;
+    }
+
+    // If already connected, return existing client
+    if (mongoClient && mongoDb && mongoClient.topology && mongoClient.topology.isConnected()) {
+      return mongoClient;
+    }
+
+    // If already connecting, wait for that promise
+    if (isConnecting && connectionPromise) {
+      await connectionPromise;
+      return mongoClient;
+    }
+
+    // Start new connection with retry logic
+    isConnecting = true;
+    connectionPromise = (async () => {
+      let retries = 0;
+      const maxRetries = 3;
+      
+      while (retries < maxRetries) {
+        try {
+          console.log(`🔄 Attempting MongoDB connection (attempt ${retries + 1}/${maxRetries})...`);
+          
+          // Close existing client if any
+          if (mongoClient) {
+            try {
+              await mongoClient.close();
+            } catch (e) {
+              // Ignore close errors
+            }
+          }
+
+          // MongoDB connection options optimized for Render.com
+          // MongoDB Atlas (mongodb+srv://) handles TLS automatically - don't override!
+          const isAtlasConnection = MONGO_URL.startsWith('mongodb+srv://');
+          const urlHasTls = MONGO_URL.includes('tls=true') || MONGO_URL.includes('ssl=true');
+          
+          const mongoOptions = {
+            serverSelectionTimeoutMS: 30000, // 30 seconds for Render.com network latency
+            connectTimeoutMS: 30000,
+            socketTimeoutMS: 45000,
+            retryWrites: true,
+            retryReads: true,
+            // Connection pool settings
+            maxPoolSize: 10,
+            minPoolSize: 1,
+          };
+          
+          // Only add TLS options for non-Atlas connections that don't already have TLS
+          // MongoDB Atlas automatically handles TLS - adding our own causes conflicts!
+          if (!isAtlasConnection && !urlHasTls) {
+            // For non-Atlas connections without TLS in URL, add TLS if needed
+            mongoOptions.tls = true;
+            mongoOptions.tlsAllowInvalidCertificates = false;
+            mongoOptions.tlsAllowInvalidHostnames = false;
+          }
+          // For Atlas connections or connections with TLS in URL, let MongoDB handle TLS
+          
+          console.log(`🔗 MongoDB connection type: ${isAtlasConnection ? 'Atlas (mongodb+srv://)' : 'Standard (mongodb://)'}`);
+          console.log('🔌 Connecting to MongoDB...');
+          
+          mongoClient = new MongoClient(MONGO_URL, mongoOptions);
+          
+          await mongoClient.connect();
+          mongoDb = mongoClient.db();
+          console.log('✅ Connected to MongoDB');
+          
+          // Initialize collections and indexes
+          await initializeMongoDB();
+          
+          // Ensure admin user exists (only once)
+          if (!adminEnsured) {
+            await ensureAdmin(mongoDb);
+            adminEnsured = true;
+          }
+          
+          isConnecting = false;
+          console.log('✅ MongoDB connection established on startup');
+          return mongoClient;
+        } catch (err) {
+          retries++;
+          console.error('❌ MongoDB connection error:', err.message);
+          
+          // More detailed error logging for debugging on Render.com
+          if (err.message.includes('SSL') || err.message.includes('TLS') || err.message.includes('tlsv1')) {
+            console.error('   SSL/TLS error detected - this is often caused by:');
+            console.error('   1. MongoDB connection string format issues');
+            console.error('   2. TLS settings conflict (connection string vs code settings)');
+            console.error('   3. Network/firewall blocking TLS handshake');
+            console.error('   Try: Check your DATABASE_URL format and ensure it matches your MongoDB provider');
+          } else if (err.message.includes('timeout')) {
+            console.error('   Connection timeout - check network connectivity and MongoDB URL');
+          } else if (err.message.includes('authentication')) {
+            console.error('   Authentication failed - check MongoDB username/password');
+          }
+          
+          if (retries < maxRetries) {
+            const waitTime = Math.min(1000 * Math.pow(2, retries), 10000); // Exponential backoff, max 10s
+            console.log(`⚠️  MongoDB connection attempt ${retries} failed, retrying in ${waitTime}ms...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+          } else {
+            console.log('⚠️  MongoDB initial connection failed after all retries');
+            console.log('   Server will continue but database operations may fail');
+            isConnecting = false;
+            // Don't throw - allow server to continue
+            return null;
+          }
+        }
+      }
+      
+      return mongoClient;
+    })();
+
+    await connectionPromise;
+    return mongoClient;
+  };
 
   // Ensure admin user exists in MongoDB
   async function ensureAdmin(db) {
@@ -640,4 +660,14 @@ if (USE_MONGODB) {
   };
 }
 
+// Export db and initMongo function
 module.exports = db;
+if (initMongo) {
+  module.exports.initMongo = initMongo;
+} else {
+  // For SQLite, initMongo is a no-op
+  module.exports.initMongo = async function initMongo() {
+    // No-op for SQLite
+    return null;
+  };
+}
